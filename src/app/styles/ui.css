@@ -40,6 +40,10 @@ body {
     margin-top: 16px;
 }
 
+.credit + .credit {
+    margin-top: 0;
+}
+
 .flex-wrapper {
     display: flex;
     justify-content: space-between;

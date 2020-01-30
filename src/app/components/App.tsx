@@ -1,8 +1,8 @@
 import * as React from 'react';
 import WebFont from 'webfontloader';
 import cx from 'classnames';
-import {defaultBaseTextProps, defaultSizes, defaultRatio, defaultNickname} from '../../plugin/properties';
-import {getComputedFontSize} from '../lib/utils';
+import { defaultBaseTextProps, defaultSizes, defaultRatio, defaultNickname } from '../../plugin/properties';
+import { getComputedFontSize } from '../lib/utils';
 import Form from './Form/Form';
 import SizeDetail from './SizeDetail/SizeDetail';
 import _ from 'lodash';
@@ -33,7 +33,7 @@ const FONT_WEIGHTS = {
     900: 900,
 };
 
-const App = ({}) => {
+const App = ({ }) => {
     // Need to set initial states from the controller's
     const [BaseTextProps, setBaseTextProps] = React.useState(defaultBaseTextProps);
     const [Sizes, updateSizes] = React.useState(defaultSizes);
@@ -59,7 +59,7 @@ const App = ({}) => {
         );
     }, []);
 
-    const handlePreviewUpdate = React.useCallback((data: {size?: number; ratio?: number}) => {
+    const handlePreviewUpdate = React.useCallback((data: { size?: number; ratio?: number }) => {
         parent.postMessage(
             {
                 pluginMessage: {
@@ -78,9 +78,9 @@ const App = ({}) => {
         );
     }, []);
 
-    const onClickSize = ({step}: {step?: string}) => {
+    const onClickSize = ({ step }: { step?: string }) => {
         if (step) {
-            console.log('onClickSize step', {step});
+            console.log('onClickSize step', { step });
             setCurrentStep(parseInt(step));
         } else {
             setCurrentStep(Math.max(...Object.keys(Sizes).map(str => parseFloat(str))) + 1);
@@ -89,7 +89,7 @@ const App = ({}) => {
         setSidebar('size-detail');
     };
 
-    const setBaseFontSize = React.useCallback(({size}: {size: number}) => {
+    const setBaseFontSize = React.useCallback(({ size }: { size: number }) => {
         parent.postMessage(
             {
                 pluginMessage: {
@@ -105,7 +105,7 @@ const App = ({}) => {
         );
     }, []);
 
-    const setTypescaleRatio = React.useCallback(({ratio}: {ratio: number}) => {
+    const setTypescaleRatio = React.useCallback(({ ratio }: { ratio: number }) => {
         parent.postMessage(
             {
                 pluginMessage: {
@@ -130,7 +130,7 @@ const App = ({}) => {
         );
     }, []);
 
-    const onChangeNickname = React.useCallback(({nickname}: {nickname: string}) => {
+    const onChangeNickname = React.useCallback(({ nickname }: { nickname: string }) => {
         parent.postMessage(
             {
                 pluginMessage: {
@@ -147,12 +147,12 @@ const App = ({}) => {
     React.useEffect(() => {
         // This is how we read messages sent from the plugin controller
         window.onmessage = event => {
-            const {type, message} = event.data.pluginMessage;
+            const { type, message } = event.data.pluginMessage;
 
             switch (type) {
                 case 'update-interface':
                     // Update local BaseTextProps
-                    console.log('update-interface', {message});
+                    console.log('update-interface', { message });
                     setBaseTextProps(message.BaseTextProps);
                     updateSizes(message.Sizes);
                     updateRatio(message.Ratio);
@@ -170,7 +170,7 @@ const App = ({}) => {
                     console.log(`Figma Says: ${message}`);
                     break;
                 default:
-                    console.log('App received a message: ', {message});
+                    console.log('App received a message: ', { message });
             }
         };
     }, []);
@@ -277,27 +277,33 @@ const App = ({}) => {
                             })}
                     </div>
                 ) : (
-                    <div className="empty-preview">
-                        <img src={icon} width={80} height={80} className="icon" />
-                        <h1 className="title">Textyles</h1>
-                        <button onClick={onClickShowPreview} className="button button--primary">
-                            Create Text Styles
+                        <div className="empty-preview">
+                            <img src={icon} width={80} height={80} className="icon" />
+                            <h1 className="title">Textyles</h1>
+                            <button onClick={onClickShowPreview} className="button button--primary">
+                                Create Text Styles
                         </button>
-                        <p className="hint">Hint: select a text layer to base styles on its properties.</p>
+                            <p className="hint">Hint: select a text layer to base styles on its properties.</p>
 
-                        {localStyles.length > 0 && (
-                            <button onClick={onClickClearStyles} className="button button--secondary">
-                                Clear Local Text Styles
+                            {localStyles.length > 0 && (
+                                <button onClick={onClickClearStyles} className="button button--secondary">
+                                    Clear Local Text Styles
                             </button>
-                        )}
-                        <p className="credit">
-                            Made with ♥ by{' '}
-                            <a href="https://tinyeahno.com" target="_blank">
-                                Jeremy Tinianow
+                            )}
+                            <p className="credit">
+                                Made with ♥ by{' '}
+                                <a href="https://tinyeahno.com" target="_blank">
+                                    Jeremy Tinianow
                             </a>
-                        </p>
-                    </div>
-                )}
+                            </p>
+                            <p className="credit">
+                                Contribute on{' '}
+                                <a href="https://github.com/jtini/textyles" target="_blank">
+                                    Github
+                            </a>
+                            </p>
+                        </div>
+                    )}
             </main>
         </div>
     );

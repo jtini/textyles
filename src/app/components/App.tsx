@@ -218,17 +218,12 @@ const App = ({ }) => {
     if (style === 'italic') {
         specifier = `i${specifier}`;
     }
-    // Try to load the font from Google
-    // There seems to be a caching issue affecting the preview?
-    // May try using a <style> tag with Helmet instead
+
     WebFont.load({
         google: {
             families: [`${BaseTextProps.fontName.family}:${specifier}`],
         },
     });
-
-    // TODO: Have the controller send this more explicitly, i.e. is there actually a selection
-    const hasNoSelection = _.isEqual(BaseTextProps, defaultBaseTextProps);
 
     return (
         <div className="wrapper type--pos-small-normal">

@@ -116,6 +116,7 @@ const Form = (props: FormProps) => {
                 ratio,
                 nickname,
             }}
+            enableReinitialize
             validate={values => {
                 const errors = {};
 

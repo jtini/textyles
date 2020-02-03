@@ -20,6 +20,22 @@ export const defaultBaseTextProps = {
     textStyleId: '',
 };
 
+export const defaultGroup = [
+    {
+        nickname: 'Base',
+        textProps: { ...defaultBaseTextProps }
+    }, {
+        nickname: 'Bold',
+        textProps: {
+            ...defaultBaseTextProps,
+            fontName: {
+                family: defaultBaseTextProps.fontName.family,
+                style: 'Bold'
+            }
+        }
+    }
+]
+
 export const defaultSizes = {
     0: {
         name: 'Body',

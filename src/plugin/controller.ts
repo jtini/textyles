@@ -1,21 +1,10 @@
 import { getComputedFontSize } from '../app/lib/utils';
-import { defaultBaseTextProps, defaultSizes, defaultRatio, defaultNickname } from './properties';
+import { defaultBaseTextProps, defaultGroup, defaultSizes, defaultRatio, defaultNickname } from './properties';
 
 // Whatever gets sent up from App should match this
 // App should always send up base text props
-let BaseTextProps: {
-    textAlignHorizontal: string;
-    textAlignVertical: string;
-    paragraphIndent: number;
-    paragraphSpacing: number;
-    fontSize: number;
-    fontName: FontName | PluginAPI['mixed'];
-    textCase: TextCase | PluginAPI['mixed'];
-    textDecoration: TextDecoration | PluginAPI['mixed'];
-    letterSpacing: LetterSpacing | PluginAPI['mixed'];
-    lineHeight: LineHeight | PluginAPI['mixed'];
-    textStyleId: string | PluginAPI['mixed'];
-} = defaultBaseTextProps;
+let BaseTextProps = { ...defaultBaseTextProps };
+let Group = [...defaultGroup];
 let Ratio = defaultRatio;
 let Sizes = { ...defaultSizes };
 let Nickname = defaultNickname;
@@ -44,7 +33,6 @@ async function buildTypeStyles(styles) {
         console.log('buildTypeStyles, style: ', { style });
         await figma.loadFontAsync(style.fontName);
         const newStyle = figma.createTextStyle();
-        console.log({ newStyle })
         newStyle.name = style.name;
         newStyle.fontName = style.fontName;
         newStyle.fontSize = style.fontSize;
@@ -111,6 +99,7 @@ getAvailableFonts()
 figma.ui.postMessage({
     type: 'update-interface',
     message: {
+        Group,
         BaseTextProps,
         Ratio,
         Sizes,
@@ -188,6 +177,7 @@ figma.ui.onmessage = msg => {
         message: {
             BaseTextProps,
             Ratio,
+            Group,
             Sizes,
             Nickname,
             localStyles,
@@ -233,31 +223,37 @@ figma.ui.onmessage = msg => {
             console.log('generate-styles');
             let TextStyles = {};
 
-            Object.keys(Sizes).forEach(key => {
-                const size = Sizes[key];
-                // console.log('generate-styles, size: ', { size });
-                const styleKey = `${size.name} / ${Nickname}`;
-                // console.log('generate-styles, styleKey: ', { styleKey });
-                const textStyle = {
-                    ...BaseTextProps,
-                    fontSize: getComputedFontSize({
-                        step: size.step,
-                        baseSize: BaseTextProps.fontSize,
-                        ratio: Ratio,
-                        // TODO: Make "Round" configurable
-                        round: Round,
-                    }),
-                };
-                // console.log('generate-styles, textStyle: ', { textStyle });
+            Group.forEach(group => {
 
-                TextStyles = {
-                    ...TextStyles,
-                    [styleKey]: {
-                        name: styleKey,
-                        ...textStyle,
-                    },
-                };
-            });
+                Object.keys(Sizes).forEach(key => {
+                    const size = Sizes[key];
+                    // console.log('generate-styles, size: ', { size });
+                    const styleKey = `${size.name} / ${group.nickname}`;
+                    // console.log('generate-styles, styleKey: ', { styleKey });
+                    const textStyle = {
+                        ...group.textProps,
+                        fontSize: getComputedFontSize({
+                            step: size.step,
+                            baseSize: group.textProps.fontSize,
+                            ratio: Ratio,
+                            // TODO: Make "Round" configurable
+                            round: Round,
+                        }),
+                    };
+                    // console.log('generate-styles, textStyle: ', { textStyle });
+
+                    TextStyles = {
+                        ...TextStyles,
+                        [styleKey]: {
+                            name: styleKey,
+                            ...textStyle,
+                        },
+                    };
+                });
+
+            })
+
+
             console.log('generate-styles, TextStyles: ', { TextStyles });
             buildTypeStyles(TextStyles);
             // NOTE: Closing the plugin at this point can cause styles to not be built

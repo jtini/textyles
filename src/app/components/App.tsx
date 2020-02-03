@@ -1,49 +1,24 @@
 import * as React from 'react';
-import WebFont from 'webfontloader';
-import cx from 'classnames';
-import { defaultBaseTextProps, defaultSizes, defaultRatio, defaultNickname } from '../../plugin/properties';
-import { getComputedFontSize } from '../lib/utils';
+import { defaultBaseTextProps, defaultGroup, defaultSizes, defaultRatio, defaultNickname } from '../../plugin/properties';
 import Form from './Form/Form';
+import Preview from './Preview/Preview';
 import SizeDetail from './SizeDetail/SizeDetail';
 import _ from 'lodash';
 import icon from '../assets/Icon.svg';
 import '../styles/ui.css';
 import '../styles/figma-plugin-ds.min.css';
 
-const FONT_WEIGHTS = {
-    thin: 100,
-    100: 100,
-    extralight: 200,
-    200: 200,
-    light: 300,
-    300: 300,
-    normal: 400,
-    regular: 400,
-    italic: 400,
-    book: 400,
-    400: 400,
-    medium: 500,
-    500: 500,
-    semibold: 600,
-    600: 600,
-    bold: 700,
-    700: 700,
-    extrabold: 800,
-    800: 800,
-    black: 900,
-    ultrabold: 900,
-    900: 900,
-};
-
 const App = ({ }) => {
     // Need to set initial states from the controller's
     const [BaseTextProps, setBaseTextProps] = React.useState(defaultBaseTextProps);
+    const [Group, setGroup] = React.useState(defaultGroup);
     const [Sizes, updateSizes] = React.useState(defaultSizes);
     const [Ratio, updateRatio] = React.useState(defaultRatio);
     const [Nickname, updateNickname] = React.useState(defaultNickname);
     const [currentStep, setCurrentStep] = React.useState(0);
     const [localStyles, setLocalStyles] = React.useState([]);
     const [availableFonts, setAvailableFonts] = React.useState([]);
+    const [currentGroup, setCurrentGroup] = React.useState(0);
 
     // TODO: Make this setting
     const [round, setRound] = React.useState(true);
@@ -180,6 +155,7 @@ const App = ({ }) => {
                     // Update local BaseTextProps
                     console.log('update-interface', { message });
                     setBaseTextProps(message.BaseTextProps);
+                    setGroup(message.Group);
                     updateSizes(message.Sizes);
                     updateRatio(message.Ratio);
                     updateNickname(message.Nickname);
@@ -201,30 +177,6 @@ const App = ({ }) => {
         };
     }, []);
 
-    // Split and translate for styling and correct font loading
-    const splitStyle = BaseTextProps.fontName.style.split(' ');
-    let style = 'normal';
-    if (BaseTextProps.fontName.style.toLowerCase().indexOf('italic') > -1) {
-        style = 'italic'
-    }
-
-    const weight = FONT_WEIGHTS[splitStyle[0].toLowerCase()] || '400';
-
-    let specifier = '400';
-
-    if (weight !== 400) {
-        specifier = `${weight.toString()}`
-    }
-    if (style === 'italic') {
-        specifier = `i${specifier}`;
-    }
-
-    WebFont.load({
-        google: {
-            families: [`${BaseTextProps.fontName.family}:${specifier}`],
-        },
-    });
-
     return (
         <div className="wrapper type--pos-small-normal">
             {isSidebarVisible && (
@@ -232,14 +184,14 @@ const App = ({ }) => {
                     {sidebar === 'form' && (
                         <Form
                             Sizes={Sizes}
-                            baseSize={BaseTextProps.fontSize}
+                            baseSize={Group[currentGroup].textProps.fontSize}
                             setBaseSize={setBaseFontSize}
                             setRatio={setTypescaleRatio}
                             handlePreviewUpdate={handlePreviewUpdate}
                             onClickSize={onClickSize}
-                            baseFontName={BaseTextProps.fontName}
+                            baseFontName={Group[currentGroup].textProps.fontName}
                             setNickname={onChangeNickname}
-                            nickname={Nickname}
+                            nickname={Group[currentGroup].nickname}
                             round={round}
                             ratio={Ratio}
                             availableFonts={availableFonts}
@@ -259,44 +211,33 @@ const App = ({ }) => {
             <main className="preview">
                 {isSidebarVisible ? (
                     <div>
-                        {Object.keys(Sizes)
-                            .sort((a, b) => +a - +b)
-                            .map(key => {
-                                const Size = Sizes[key];
-                                const actualSize = getComputedFontSize({
-                                    step: Size.step,
-                                    baseSize: BaseTextProps.fontSize,
-                                    ratio: Ratio,
-                                    round,
-                                });
+                        {Group.map((group, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setCurrentGroup(idx)}
+                            >
+                                {group.nickname}
+                            </button>
+                        ))}
+                        {Group.map((group, idx) => {
+
+                            if (idx === currentGroup) {
                                 return (
-                                    <div
-                                        key={key}
-                                        className={cx('preview-item', {
-                                            'preview-item--subdued':
-                                                sidebar === 'size-detail' && currentStep.toString() !== key,
-                                            'preview-item--selected':
-                                                sidebar === 'size-detail' && currentStep.toString() === key,
-                                        })}
-                                    >
-                                        <p className="preview-item__description">
-                                            <span className="preview-item__description-string">{`${Size.name} / ${Nickname}`}</span>
-                                            <span className="preview-item__description-string">{`${actualSize}px`}</span>
-                                        </p>
-                                        <p
-                                            className="preview-item__sample"
-                                            style={{
-                                                fontSize: actualSize,
-                                                fontFamily: `"${BaseTextProps.fontName.family}"`,
-                                                fontWeight: weight,
-                                                fontStyle: style,
-                                            }}
-                                        >
-                                            The quick brown fox jumps over the lazy dog
-                                        </p>
+                                    <div key={idx}>
+                                        <Preview
+                                            Sizes={Sizes}
+                                            Ratio={Ratio}
+                                            currentStep={currentStep}
+                                            round={round}
+                                            sidebar={sidebar}
+                                            {...group}
+                                        />
                                     </div>
-                                );
-                            })}
+                                )
+                            }
+
+                            return null
+                        })}
                     </div>
                 ) : (
                         <div className="empty-preview">

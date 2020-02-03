@@ -18,6 +18,8 @@ const FONT_WEIGHTS = {
     light: 300,
     300: 300,
     normal: 400,
+    regular: 400,
+    italic: 400,
     book: 400,
     400: 400,
     medium: 500,
@@ -202,27 +204,26 @@ const App = ({ }) => {
     // Split and translate for styling and correct font loading
     const splitStyle = BaseTextProps.fontName.style.split(' ');
     let style = 'normal';
-    const weight = FONT_WEIGHTS[splitStyle[0].toLowerCase()] || splitStyle[0];
-    let fvd = 'n4';
-    if (splitStyle.length > 1) {
-        style = splitStyle[1].toLowerCase();
-    }
-    if (splitStyle[0].toLowerCase() === 'italic') {
-        style = 'italic';
-    }
-    if (weight !== 400) {
-        fvd = `n${weight.toString().charAt(0)}`;
-    }
-    if (style === 'italic') {
-        fvd = `i${fvd.charAt(1)}`;
+    if (BaseTextProps.fontName.style.toLowerCase().indexOf('italic') > -1) {
+        style = 'italic'
     }
 
+    const weight = FONT_WEIGHTS[splitStyle[0].toLowerCase()] || '400';
+
+    let specifier = '400';
+
+    if (weight !== 400) {
+        specifier = `${weight.toString()}`
+    }
+    if (style === 'italic') {
+        specifier = `i${specifier}`;
+    }
     // Try to load the font from Google
     // There seems to be a caching issue affecting the preview?
     // May try using a <style> tag with Helmet instead
     WebFont.load({
         google: {
-            families: [`${BaseTextProps.fontName.family}:${fvd}`],
+            families: [`${BaseTextProps.fontName.family}:${specifier}`],
         },
     });
 

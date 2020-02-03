@@ -3,6 +3,28 @@ import { Formik } from 'formik';
 import { getComputedFontSize } from '../../lib/utils';
 import StyleSwitcher from '../StyleSwitcher/StyleSwitcher';
 
+const STYLES_ORDER = {
+    thin: 1,
+    'thin italic': 1,
+    extralight: 2,
+    'extralight italic': 2,
+    light: 3,
+    'light italic': 3,
+    regular: 4,
+    italic: 4,
+    book: 4,
+    medium: 5,
+    'medium italic': 5,
+    semibold: 6,
+    'semibold italic': 6,
+    bold: 7,
+    'bold italic': 7,
+    extrabold: 8,
+    'extrabold italic': 8,
+    black: 9,
+    'black italic': 9
+}
+
 interface FormProps {
     baseSize: number;
     Sizes: any;
@@ -45,9 +67,21 @@ const Form = (props: FormProps) => {
 
     const availableStyles = availableFonts.filter(font => font.fontName.family === baseFontName.family)
 
-    const sortedStyles = [...availableStyles]
+    const normalStyles = [...availableStyles].filter(font => font.fontName.style.toLocaleLowerCase().indexOf('italic') === -1)
+    const italicStyles = [...availableStyles].filter(font => font.fontName.style.toLocaleLowerCase().indexOf('italic') > -1)
 
-    console.log({ availableStyles })
+    const sortedNormalStyles = [...normalStyles].sort((a, b) => {
+        const aOrder = STYLES_ORDER[a.fontName.style.toLowerCase()] || 4;
+        const bOrder = STYLES_ORDER[b.fontName.style.toLowerCase()] || 4
+        return +aOrder - +bOrder
+    })
+    const sortedItalicStyles = [...italicStyles].sort((a, b) => {
+        const aOrder = STYLES_ORDER[a.fontName.style.toLowerCase()] || 4;
+        const bOrder = STYLES_ORDER[b.fontName.style.toLowerCase()] || 4
+        return +aOrder - +bOrder
+    })
+
+    const sortedStyles = [[...sortedNormalStyles], [...sortedItalicStyles]]
 
     const handleGenerateStyles = React.useCallback((data: any) => {
         parent.postMessage(
@@ -95,6 +129,19 @@ const Form = (props: FormProps) => {
             {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
                 <form className="sidebar__inner" onSubmit={handleSubmit}>
                     <div className="sidebar__scrollable">
+
+                        <section className="sidebar-section">
+                            <h2 className="section-title">Font</h2>
+                            <input className="input" value={baseFontName.family} readOnly />
+                            <StyleSwitcher
+                                styles={sortedStyles}
+                                currentStyle={baseFontName.style}
+                                setBaseFontStyle={setBaseFontStyle}
+                            />
+                        </section>
+
+                        <div className="divider" />
+
                         <section className="sidebar-section">
                             <h2 className="section-title">Font Nickname</h2>
                             <input
@@ -107,19 +154,6 @@ const Form = (props: FormProps) => {
                                 }}
                                 onBlur={handleBlur}
                                 value={values.nickname}
-                            />
-                        </section>
-
-                        <div className="divider" />
-
-                        <section className="sidebar-section">
-                            <h2 className="section-title">Font</h2>
-                            <input className="input" value={baseFontName.family} readOnly />
-                            <StyleSwitcher
-                                styles={sortedStyles}
-                                currentStyle={baseFontName.style}
-                                setBaseFontStyle={setBaseFontStyle}
-                                baseFontName={baseFontName}
                             />
                         </section>
 

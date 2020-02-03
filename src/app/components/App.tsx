@@ -41,6 +41,7 @@ const App = ({ }) => {
     const [Nickname, updateNickname] = React.useState(defaultNickname);
     const [currentStep, setCurrentStep] = React.useState(0);
     const [localStyles, setLocalStyles] = React.useState([]);
+    const [availableFonts, setAvailableFonts] = React.useState([]);
 
     // TODO: Make this setting
     const [round, setRound] = React.useState(true);
@@ -105,6 +106,25 @@ const App = ({ }) => {
         );
     }, []);
 
+    const setBaseFontStyle = React.useCallback(({ style, family }: { style: string, family: string }) => {
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'set-base-font-style',
+                    data: {
+                        BaseTextProps: {
+                            fontName: {
+                                family,
+                                style
+                            },
+                        },
+                    },
+                },
+            },
+            '*'
+        );
+    }, []);
+
     const setTypescaleRatio = React.useCallback(({ ratio }: { ratio: number }) => {
         parent.postMessage(
             {
@@ -150,6 +170,10 @@ const App = ({ }) => {
             const { type, message } = event.data.pluginMessage;
 
             switch (type) {
+                case 'fonts-available':
+                    console.log('fonts-available');
+                    setAvailableFonts(message.availableFonts)
+                    break;
                 case 'update-interface':
                     // Update local BaseTextProps
                     console.log('update-interface', { message });
@@ -222,6 +246,8 @@ const App = ({ }) => {
                             nickname={Nickname}
                             round={round}
                             ratio={Ratio}
+                            availableFonts={availableFonts}
+                            setBaseFontStyle={setBaseFontStyle}
                         />
                     )}
                     {sidebar === 'size-detail' && (

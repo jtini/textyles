@@ -1,9 +1,5 @@
-import {getComputedFontSize} from '../app/lib/utils';
-import {defaultBaseTextProps, defaultSizes, defaultRatio, defaultNickname} from './properties';
-
-// Big TODOS
-// 1. Opening screen should show info about current selection and local styles
-// 2. Make rounding a configurable option
+import { getComputedFontSize } from '../app/lib/utils';
+import { defaultBaseTextProps, defaultSizes, defaultRatio, defaultNickname } from './properties';
 
 // Whatever gets sent up from App should match this
 // App should always send up base text props
@@ -21,15 +17,21 @@ let BaseTextProps: {
     textStyleId: string | PluginAPI['mixed'];
 } = defaultBaseTextProps;
 let Ratio = defaultRatio;
-let Sizes = {...defaultSizes};
+let Sizes = { ...defaultSizes };
 let Nickname = defaultNickname;
 let Round = true;
 
 // This may be useful for setting the fonts in the actual plugin UI
-// async function getAvailableFonts() {
-//     const availableFonts = await figma.listAvailableFontsAsync();
-//     return availableFonts;
-// }
+async function getAvailableFonts() {
+    const availableFonts = await figma.listAvailableFontsAsync();
+    figma.ui.postMessage({
+        type: 'fonts-available',
+        message: {
+            availableFonts
+        },
+    });
+    return availableFonts;
+}
 
 async function buildTypeStyles(styles) {
     // const textStyles = figma.getLocalTextStyles();
@@ -39,9 +41,10 @@ async function buildTypeStyles(styles) {
 
         // if (typeof currentStyle === 'undefined') {
         // There is no existing style, so make a new one
-        console.log('buildTypeStyles, style: ', {style});
+        console.log('buildTypeStyles, style: ', { style });
         await figma.loadFontAsync(style.fontName);
         const newStyle = figma.createTextStyle();
+        console.log({ newStyle })
         newStyle.name = style.name;
         newStyle.fontName = style.fontName;
         newStyle.fontSize = style.fontSize;
@@ -102,6 +105,8 @@ figma.showUI(__html__, {
     height: 600,
 });
 
+getAvailableFonts()
+
 // Hydrate the UI
 figma.ui.postMessage({
     type: 'update-interface',
@@ -146,7 +151,7 @@ figma.ui.onmessage = msg => {
 
         // If the message updates a size
         if (msg.data.prevSize && msg.data.newSize) {
-            let newSizes = {...Sizes};
+            let newSizes = { ...Sizes };
             delete newSizes[msg.data.prevSize.step];
             newSizes = {
                 ...newSizes,
@@ -162,7 +167,7 @@ figma.ui.onmessage = msg => {
 
         // If we need to remove a size
         if (msg.data.removeSize) {
-            let newSizes = {...Sizes};
+            let newSizes = { ...Sizes };
             delete newSizes[msg.data.removeSize.step];
             Sizes = {
                 ...newSizes,
@@ -175,7 +180,7 @@ figma.ui.onmessage = msg => {
         }
     }
 
-    console.log('figma.ui.onmessage, before: ', {BaseTextProps, Ratio, Sizes});
+    console.log('figma.ui.onmessage, before: ', { BaseTextProps, Ratio, Sizes });
 
     // Always update the interface
     figma.ui.postMessage({
@@ -199,6 +204,9 @@ figma.ui.onmessage = msg => {
             break;
         case 'set-base-font-size':
             console.log('set-base-font-size');
+            break;
+        case 'set-base-font-style':
+            console.log('set-base-font-style');
             break;
         case 'set-base-ratio':
             console.log('set-base-ratio');
@@ -250,9 +258,10 @@ figma.ui.onmessage = msg => {
                     },
                 };
             });
-            console.log('generate-styles, TextStyles: ', {TextStyles});
+            console.log('generate-styles, TextStyles: ', { TextStyles });
             buildTypeStyles(TextStyles);
-            figma.closePlugin();
+            // NOTE: Closing the plugin at this point can cause styles to not be built
+            // figma.closePlugin();
             break;
         case 'clear-local-styles':
             console.log('clear-local-styles');
@@ -273,6 +282,6 @@ figma.ui.onmessage = msg => {
             });
             break;
         default:
-            console.log('Figma UI Sent a Message: ', {msg});
+            console.log('Figma UI Sent a Message: ', { msg });
     }
 };

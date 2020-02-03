@@ -1,6 +1,7 @@
 import React from 'react';
-import {Formik} from 'formik';
-import {getComputedFontSize} from '../../lib/utils';
+import { Formik } from 'formik';
+import { getComputedFontSize } from '../../lib/utils';
+import StyleSwitcher from '../StyleSwitcher/StyleSwitcher';
 
 interface FormProps {
     baseSize: number;
@@ -9,7 +10,7 @@ interface FormProps {
     setRatio: (args: any) => void;
     handlePreviewUpdate: (args: any) => void;
     onClickSize: (args?: any) => void;
-    setNickname: ({nickname}: {nickname: string}) => void;
+    setNickname: ({ nickname }: { nickname: string }) => void;
     round?: boolean;
     ratio: number;
     baseFontName: {
@@ -17,6 +18,13 @@ interface FormProps {
         style: string;
     };
     nickname: string;
+    availableFonts: {
+        fontName: {
+            family: string,
+            style: string
+        }
+    }[],
+    setBaseFontStyle: ({ style, family }: { style: string, family: string }) => void
 }
 
 const Form = (props: FormProps) => {
@@ -31,7 +39,15 @@ const Form = (props: FormProps) => {
         ratio,
         round,
         baseFontName,
+        availableFonts,
+        setBaseFontStyle
     } = props;
+
+    const availableStyles = availableFonts.filter(font => font.fontName.family === baseFontName.family)
+
+    const sortedStyles = [...availableStyles]
+
+    console.log({ availableStyles })
 
     const handleGenerateStyles = React.useCallback((data: any) => {
         parent.postMessage(
@@ -71,12 +87,12 @@ const Form = (props: FormProps) => {
 
                 return errors;
             }}
-            onSubmit={(values, {setSubmitting}) => {
+            onSubmit={(values, { setSubmitting }) => {
                 handleGenerateStyles();
                 return null;
             }}
         >
-            {({values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting}) => (
+            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
                 <form className="sidebar__inner" onSubmit={handleSubmit}>
                     <div className="sidebar__scrollable">
                         <section className="sidebar-section">
@@ -87,10 +103,23 @@ const Form = (props: FormProps) => {
                                 name="nickname"
                                 onChange={e => {
                                     handleChange(e);
-                                    setNickname({nickname: e.target.value});
+                                    setNickname({ nickname: e.target.value });
                                 }}
                                 onBlur={handleBlur}
                                 value={values.nickname}
+                            />
+                        </section>
+
+                        <div className="divider" />
+
+                        <section className="sidebar-section">
+                            <h2 className="section-title">Font</h2>
+                            <input className="input" value={baseFontName.family} readOnly />
+                            <StyleSwitcher
+                                styles={sortedStyles}
+                                currentStyle={baseFontName.style}
+                                setBaseFontStyle={setBaseFontStyle}
+                                baseFontName={baseFontName}
                             />
                         </section>
 
@@ -111,7 +140,7 @@ const Form = (props: FormProps) => {
                                         onChange={e => {
                                             const newSize = parseFloat(e.target.value);
                                             handleChange(e);
-                                            setBaseSize({size: newSize});
+                                            setBaseSize({ size: newSize });
                                         }}
                                         onBlur={handleBlur}
                                         value={values.baseSize}
@@ -128,7 +157,7 @@ const Form = (props: FormProps) => {
                                         name="ratio"
                                         onChange={e => {
                                             const newRatio = parseFloat(e.target.value);
-                                            setRatio({ratio: newRatio});
+                                            setRatio({ ratio: newRatio });
                                             handleChange(e);
                                         }}
                                         onBlur={handleBlur}
@@ -146,17 +175,17 @@ const Form = (props: FormProps) => {
                                 .sort((a, b) => +a - +b)
                                 .map(key => {
                                     const Size = Sizes[key];
-                                    const actualSize = getComputedFontSize({step: Size.step, baseSize, ratio, round});
+                                    const actualSize = getComputedFontSize({ step: Size.step, baseSize, ratio, round });
 
                                     return (
                                         <div key={key} className="size">
-                                            <span className="size__sample" style={{fontFamily: baseFontName.family}}>
+                                            <span className="size__sample" style={{ fontFamily: baseFontName.family }}>
                                                 Ag
                                             </span>
                                             <span className="size__text">{`${Size.name}, ${actualSize}px`}</span>
                                             <div
                                                 className="icon icon--adjust icon--button"
-                                                onClick={() => onClickSize({step: Size.step.toString()})}
+                                                onClick={() => onClickSize({ step: Size.step.toString() })}
                                             />
                                         </div>
                                     );

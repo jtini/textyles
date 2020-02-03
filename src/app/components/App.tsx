@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { defaultBaseTextProps, defaultGroup, defaultSizes, defaultRatio, defaultNickname } from '../../plugin/properties';
+import cx from 'classnames'
+import { defaultBaseTextProps, defaultGroup, defaultSizes, defaultRatio } from '../../plugin/properties';
 import Form from './Form/Form';
 import Preview from './Preview/Preview';
 import SizeDetail from './SizeDetail/SizeDetail';
@@ -14,7 +15,6 @@ const App = ({ }) => {
     const [Group, setGroup] = React.useState(defaultGroup);
     const [Sizes, updateSizes] = React.useState(defaultSizes);
     const [Ratio, updateRatio] = React.useState(defaultRatio);
-    const [Nickname, updateNickname] = React.useState(defaultNickname);
     const [currentStep, setCurrentStep] = React.useState(0);
     const [localStyles, setLocalStyles] = React.useState([]);
     const [availableFonts, setAvailableFonts] = React.useState([]);
@@ -158,7 +158,6 @@ const App = ({ }) => {
                     setGroup(message.Group);
                     updateSizes(message.Sizes);
                     updateRatio(message.Ratio);
-                    updateNickname(message.Nickname);
                     setLocalStyles(message.localStyles);
                     setRound(message.Round);
                     break;
@@ -211,14 +210,20 @@ const App = ({ }) => {
             <main className="preview">
                 {isSidebarVisible ? (
                     <div>
-                        {Group.map((group, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setCurrentGroup(idx)}
-                            >
-                                {group.nickname}
-                            </button>
-                        ))}
+                        <div className="tabs">
+                            {Group.map((group, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setCurrentGroup(idx)}
+                                    className={cx("button tab", {
+                                        "tab--is-active": currentGroup === idx
+                                    })}
+                                >
+                                    {group.nickname}
+                                </button>
+                            ))}
+                            <button className="button button--secondary">Add a group</button>
+                        </div>
                         {Group.map((group, idx) => {
 
                             if (idx === currentGroup) {

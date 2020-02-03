@@ -241,3 +241,31 @@ button + button {
 .delete-button {
     margin-top: 12px;
 }
+
+.tabs {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.tab {
+    position: relative;
+    background-color: transparent;
+    border-radius: 0;
+    font-weight: 700;
+}
+
+.tab:after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #18a0fb;
+    opacity: 0;
+}
+
+.tab.tab--is-active:after {
+    opacity: 1;
+}

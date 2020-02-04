@@ -113,25 +113,32 @@ figma.ui.postMessage({
 });
 
 figma.ui.onmessage = msg => {
-    // Update whatever we need to beforehand
-    if (msg.data) {
-        console.log('msg.data: ', msg.data);
-        // If the message updates the nickname
-        if (msg.data.Nickname) {
-            Nickname = msg.data.Nickname;
-        }
+    console.log('figma.ui.onmessage, before: ', { BaseTextProps, Ratio, Sizes });
 
-        // If the message includes changes to base text props
-        if (msg.data.BaseTextProps) {
+    switch (msg.type) {
+        case 'set-rounding':
+            console.log('set-rounding');
+            Round = msg.data.round === 'false' ? false : true;
+            break;
+        case 'update-nickname':
+            console.log('update-nickname');
+            Nickname = msg.data.Nickname;
+            break;
+        case 'set-base-font-size':
+            console.log('set-base-font-size');
             BaseTextProps = {
                 ...BaseTextProps,
                 ...msg.data.BaseTextProps,
             };
-        }
-
-        // We need to update a specific group
-        if (typeof msg.data.groupIdx === 'number' && msg.data.fontName) {
-            console.log('>>>>>>>>> Update')
+            BaseSize = msg.data.BaseSize;
+            break;
+        case 'set-base-font-style':
+            console.log('set-base-font-style');
+            BaseTextProps = {
+                ...BaseTextProps,
+                ...msg.data.BaseTextProps,
+            };
+            // We need to update a specific group
             Group[msg.data.groupIdx] = {
                 ...Group[msg.data.groupIdx],
                 textProps: {
@@ -139,92 +146,10 @@ figma.ui.onmessage = msg => {
                     fontName: msg.data.fontName
                 }
             }
-        }
-
-        // If the message updates the base size
-        if (msg.data.BaseSize) {
-            console.log('controller: update Base Size');
-            BaseSize = msg.data.BaseSize;
-        }
-
-        // If the message updates the ratio
-        if (msg.data.Ratio) {
-            console.log('controller: update Ratio');
-            Ratio = msg.data.Ratio;
-        }
-
-        // If the message updates sizes
-        if (msg.data.Sizes) {
-            console.log('controller: update Sizes');
-            Sizes = {
-                ...Sizes,
-                ...msg.data.Sizes,
-            };
-        }
-
-        // If the message updates a size
-        if (msg.data.prevSize && msg.data.newSize) {
-            let newSizes = { ...Sizes };
-            delete newSizes[msg.data.prevSize.step];
-            newSizes = {
-                ...newSizes,
-                [msg.data.newSize.step]: {
-                    step: msg.data.newSize.step,
-                    name: msg.data.newSize.name,
-                },
-            };
-            Sizes = {
-                ...newSizes,
-            };
-        }
-
-        // If we need to remove a size
-        if (msg.data.removeSize) {
-            let newSizes = { ...Sizes };
-            delete newSizes[msg.data.removeSize.step];
-            Sizes = {
-                ...newSizes,
-            };
-        }
-
-        // If rounding changed
-        if (msg.data.round) {
-            Round = msg.data.round === 'false' ? false : true;
-        }
-    }
-
-    console.log('figma.ui.onmessage, before: ', { BaseTextProps, Ratio, Sizes });
-
-    // Always update the interface
-    figma.ui.postMessage({
-        type: 'update-interface',
-        message: {
-            BaseTextProps,
-            BaseSize,
-            Ratio,
-            Group,
-            Sizes,
-            Nickname,
-            localStyles,
-            Round,
-        },
-    });
-
-    switch (msg.type) {
-        case 'set-rounding':
-            console.log('set-rounding');
-            break;
-        case 'update-nickname':
-            console.log('update-nickname');
-            break;
-        case 'set-base-font-size':
-            console.log('set-base-font-size');
-            break;
-        case 'set-base-font-style':
-            console.log('set-base-font-style');
             break;
         case 'set-base-ratio':
             console.log('set-base-ratio');
+            Ratio = msg.data.Ratio;
             break;
         case 'request-preview':
             figma.ui.postMessage({
@@ -237,12 +162,34 @@ figma.ui.onmessage = msg => {
             break;
         case 'add-size':
             console.log('add-size');
+            Sizes = {
+                ...Sizes,
+                ...msg.data.Sizes,
+            };
             break;
-        case 'update-size':
+        case 'update-size': {
             console.log('update-size');
+            let newSizes = { ...Sizes };
+            delete newSizes[msg.data.prevSize.step];
+            newSizes = {
+                ...newSizes,
+                [msg.data.newSize.step]: {
+                    step: msg.data.newSize.step,
+                    name: msg.data.newSize.name,
+                },
+            };
+            Sizes = {
+                ...newSizes,
+            };
             break;
+        }
         case 'remove-size':
             console.log('remove-size');
+            let newSizes = { ...Sizes };
+            delete newSizes[msg.data.removeSize.step];
+            Sizes = {
+                ...newSizes,
+            };
             break;
         case 'generate-styles':
             console.log('generate-styles');
@@ -305,4 +252,19 @@ figma.ui.onmessage = msg => {
         default:
             console.log('Figma UI Sent a Message: ', { msg });
     }
+
+    // Always update the interface
+    figma.ui.postMessage({
+        type: 'update-interface',
+        message: {
+            BaseTextProps,
+            BaseSize,
+            Ratio,
+            Group,
+            Sizes,
+            Nickname,
+            localStyles,
+            Round,
+        },
+    });
 };

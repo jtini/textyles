@@ -73,19 +73,22 @@ if (currentSelection.length === 1 && currentSelection[0].type === 'TEXT') {
     } = baseNode;
 
     if (typeof fontName !== 'symbol' && typeof fontSize === 'number') {
-        BaseTextProps = {
-            textAlignHorizontal,
-            textAlignVertical,
-            paragraphIndent,
-            paragraphSpacing,
-            fontSize,
-            fontName,
-            textCase,
-            textDecoration,
-            letterSpacing,
-            lineHeight,
-            textStyleId,
-        };
+        Group[0] = {
+            ...Group[0],
+            textProps: {
+                textAlignHorizontal,
+                textAlignVertical,
+                paragraphIndent,
+                paragraphSpacing,
+                fontSize,
+                fontName,
+                textCase,
+                textDecoration,
+                letterSpacing,
+                lineHeight,
+                textStyleId,
+            }
+        }
 
         BaseSize = fontSize;
     }

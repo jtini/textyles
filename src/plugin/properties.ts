@@ -24,15 +24,6 @@ export const defaultGroup = [
     {
         nickname: 'Base',
         textProps: { ...defaultBaseTextProps }
-    }, {
-        nickname: 'Bold',
-        textProps: {
-            ...defaultBaseTextProps,
-            fontName: {
-                family: defaultBaseTextProps.fontName.family,
-                style: 'Bold'
-            }
-        }
     }
 ]
 

@@ -20,8 +20,6 @@ const App = ({ }) => {
     const [localStyles, setLocalStyles] = React.useState([]);
     const [availableFonts, setAvailableFonts] = React.useState([]);
     const [currentGroup, setCurrentGroup] = React.useState(0);
-
-    // TODO: Make this setting
     const [round, setRound] = React.useState(true);
 
     const [isSidebarVisible, setFormVisible] = React.useState(false);
@@ -143,6 +141,21 @@ const App = ({ }) => {
         );
     }, []);
 
+    const addGroup = React.useCallback(({ group }: { group: any }) => {
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'add-group',
+                    data: {
+                        name: 'New Group',
+                        textProps: group[0].textProps
+                    },
+                },
+            },
+            '*'
+        );
+    }, []);
+
     React.useEffect(() => {
         // This is how we read messages sent from the plugin controller
         window.onmessage = event => {
@@ -178,6 +191,13 @@ const App = ({ }) => {
             }
         };
     }, []);
+
+    // TODO: Figure out how to advance to the new group when it's created
+    // React.useEffect(() => {
+    //     console.log('React.useEffect', { Group })
+    //     setCurrentGroup(Group.length - 1)
+    // }, [Group])
+
 
     return (
         <div className="wrapper type--pos-small-normal">
@@ -227,7 +247,14 @@ const App = ({ }) => {
                                     {group.nickname}
                                 </button>
                             ))}
-                            <button className="button button--secondary">Add a group</button>
+                            <button
+                                className="button button--secondary"
+                                onClick={() => {
+                                    addGroup({
+                                        group: Group
+                                    })
+                                }}
+                            >Add a group</button>
                         </div>
                         {Group.map((group, idx) => {
 

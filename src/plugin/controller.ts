@@ -1,6 +1,8 @@
 import { getComputedFontSize } from '../app/lib/utils';
 import { defaultBaseTextProps, defaultGroup, defaultSizes, defaultBaseSize, defaultRatio, defaultNickname } from './properties';
 
+// TODO: Pick up text decoration
+
 // Whatever gets sent up from App should match this
 // App should always send up base text props
 let BaseTextProps = { ...defaultBaseTextProps };
@@ -119,6 +121,16 @@ figma.ui.onmessage = msg => {
     console.log('figma.ui.onmessage, before: ', { BaseTextProps, Ratio, Sizes });
 
     switch (msg.type) {
+        case 'add-group':
+            console.log('add-group');
+            Group = [
+                ...Group,
+                {
+                    nickname: msg.data.name,
+                    textProps: msg.data.textProps
+                }
+            ];
+            break;
         case 'set-rounding':
             console.log('set-rounding');
             Round = msg.data.round === 'false' ? false : true;

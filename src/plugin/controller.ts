@@ -122,23 +122,17 @@ figma.ui.onmessage = msg => {
             break;
         case 'update-nickname':
             console.log('update-nickname');
-            Nickname = msg.data.Nickname;
+            Group[msg.data.groupIdx] = {
+                ...Group[msg.data.groupIdx],
+                nickname: msg.data.Nickname
+            }
             break;
         case 'set-base-font-size':
             console.log('set-base-font-size');
-            BaseTextProps = {
-                ...BaseTextProps,
-                ...msg.data.BaseTextProps,
-            };
             BaseSize = msg.data.BaseSize;
             break;
         case 'set-base-font-style':
             console.log('set-base-font-style');
-            BaseTextProps = {
-                ...BaseTextProps,
-                ...msg.data.BaseTextProps,
-            };
-            // We need to update a specific group
             Group[msg.data.groupIdx] = {
                 ...Group[msg.data.groupIdx],
                 textProps: {

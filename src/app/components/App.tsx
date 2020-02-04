@@ -128,12 +128,13 @@ const App = ({ }) => {
         );
     }, []);
 
-    const onChangeNickname = React.useCallback(({ nickname }: { nickname: string }) => {
+    const onChangeNickname = React.useCallback(({ nickname, groupIdx }: { nickname: string, groupIdx: number }) => {
         parent.postMessage(
             {
                 pluginMessage: {
                     type: 'update-nickname',
                     data: {
+                        groupIdx,
                         Nickname: nickname,
                     },
                 },

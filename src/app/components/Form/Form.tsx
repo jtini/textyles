@@ -32,7 +32,7 @@ interface FormProps {
     setRatio: (args: any) => void;
     handlePreviewUpdate: (args: any) => void;
     onClickSize: (args?: any) => void;
-    setNickname: ({ nickname }: { nickname: string }) => void;
+    setNickname: ({ nickname, groupIdx }: { nickname: string, groupIdx: number }) => void;
     round?: boolean;
     BaseSize: number;
     ratio: number;
@@ -156,7 +156,7 @@ const Form = (props: FormProps) => {
                                 name="nickname"
                                 onChange={e => {
                                     handleChange(e);
-                                    setNickname({ nickname: e.target.value });
+                                    setNickname({ nickname: e.target.value, groupIdx: currentGroup });
                                 }}
                                 onBlur={handleBlur}
                                 value={values.nickname}

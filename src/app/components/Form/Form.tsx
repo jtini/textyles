@@ -114,7 +114,7 @@ const Form = (props: FormProps) => {
     return (
         <Formik
             initialValues={{
-                baseSize,
+                baseSize: BaseSize,
                 ratio,
                 nickname,
             }}

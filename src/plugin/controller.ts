@@ -86,6 +86,8 @@ if (currentSelection.length === 1 && currentSelection[0].type === 'TEXT') {
             lineHeight,
             textStyleId,
         };
+
+        BaseSize = fontSize;
     }
 }
 

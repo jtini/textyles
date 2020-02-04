@@ -120,12 +120,25 @@ figma.ui.onmessage = msg => {
         if (msg.data.Nickname) {
             Nickname = msg.data.Nickname;
         }
+
         // If the message includes changes to base text props
         if (msg.data.BaseTextProps) {
             BaseTextProps = {
                 ...BaseTextProps,
                 ...msg.data.BaseTextProps,
             };
+        }
+
+        // We need to update a specific group
+        if (typeof msg.data.groupIdx === 'number' && msg.data.fontName) {
+            console.log('>>>>>>>>> Update')
+            Group[msg.data.groupIdx] = {
+                ...Group[msg.data.groupIdx],
+                textProps: {
+                    ...Group[msg.data.groupIdx].textProps,
+                    fontName: msg.data.fontName
+                }
+            }
         }
 
         // If the message updates the base size

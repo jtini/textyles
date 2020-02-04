@@ -9,11 +9,12 @@ interface StyleSwitcherProps {
         }
     }[][];
     currentStyle: string;
-    setBaseFontStyle: ({ style, family }: { style: string, family: string }) => void;
+    setBaseFontStyle: ({ style, family, groupIdx }: { style: string, family: string, groupIdx: number }) => void;
+    currentGroup: number;
 }
 
 const StyleSwitcher = (props: StyleSwitcherProps) => {
-    const { styles, currentStyle, setBaseFontStyle } = props;
+    const { styles, currentStyle, setBaseFontStyle, currentGroup } = props;
     const [showOptions, toggleOptions] = React.useState(false)
 
     return (
@@ -34,7 +35,11 @@ const StyleSwitcher = (props: StyleSwitcherProps) => {
                             {styleGroup.map(style => (
                                 <li
                                     onClick={() => {
-                                        setBaseFontStyle({ style: style.fontName.style, family: style.fontName.family })
+                                        setBaseFontStyle({
+                                            style: style.fontName.style,
+                                            family: style.fontName.family,
+                                            groupIdx: currentGroup
+                                        })
                                         toggleOptions(false)
                                     }}
                                     className={cx('select-menu__list-item', {

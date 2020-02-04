@@ -85,17 +85,16 @@ const App = ({ }) => {
         );
     }, []);
 
-    const setBaseFontStyle = React.useCallback(({ style, family }: { style: string, family: string }) => {
+    const setBaseFontStyle = React.useCallback(({ style, family, groupIdx }: { style: string, family: string, groupIdx: number }) => {
         parent.postMessage(
             {
                 pluginMessage: {
                     type: 'set-base-font-style',
                     data: {
-                        BaseTextProps: {
-                            fontName: {
-                                family,
-                                style
-                            },
+                        groupIdx,
+                        fontName: {
+                            family,
+                            style
                         },
                     },
                 },
@@ -199,6 +198,7 @@ const App = ({ }) => {
                             ratio={Ratio}
                             availableFonts={availableFonts}
                             setBaseFontStyle={setBaseFontStyle}
+                            currentGroup={currentGroup}
                         />
                     )}
                     {sidebar === 'size-detail' && (

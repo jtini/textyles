@@ -47,7 +47,8 @@ interface FormProps {
             style: string
         }
     }[],
-    setBaseFontStyle: ({ style, family }: { style: string, family: string }) => void
+    setBaseFontStyle: ({ style, family }: { style: string, family: string }) => void,
+    currentGroup: number
 }
 
 const Form = (props: FormProps) => {
@@ -64,7 +65,8 @@ const Form = (props: FormProps) => {
         round,
         baseFontName,
         availableFonts,
-        setBaseFontStyle
+        setBaseFontStyle,
+        currentGroup
     } = props;
 
     const availableStyles = availableFonts.filter(font => font.fontName.family === baseFontName.family)
@@ -140,6 +142,7 @@ const Form = (props: FormProps) => {
                                 styles={sortedStyles}
                                 currentStyle={baseFontName.style}
                                 setBaseFontStyle={setBaseFontStyle}
+                                currentGroup={currentGroup}
                             />
                         </section>
 

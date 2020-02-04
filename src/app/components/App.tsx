@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames'
-import { defaultBaseTextProps, defaultGroup, defaultSizes, defaultRatio } from '../../plugin/properties';
+import { defaultBaseTextProps, defaultGroup, defaultSizes, defaultBaseSize, defaultRatio } from '../../plugin/properties';
 import Form from './Form/Form';
 import Preview from './Preview/Preview';
 import SizeDetail from './SizeDetail/SizeDetail';
@@ -14,6 +14,7 @@ const App = ({ }) => {
     const [BaseTextProps, setBaseTextProps] = React.useState(defaultBaseTextProps);
     const [Group, setGroup] = React.useState(defaultGroup);
     const [Sizes, updateSizes] = React.useState(defaultSizes);
+    const [BaseSize, setBaseSize] = React.useState(defaultBaseSize);
     const [Ratio, updateRatio] = React.useState(defaultRatio);
     const [currentStep, setCurrentStep] = React.useState(0);
     const [localStyles, setLocalStyles] = React.useState([]);
@@ -76,6 +77,7 @@ const App = ({ }) => {
                         BaseTextProps: {
                             fontSize: size,
                         },
+                        BaseSize: size
                     },
                 },
             },
@@ -157,6 +159,7 @@ const App = ({ }) => {
                     setBaseTextProps(message.BaseTextProps);
                     setGroup(message.Group);
                     updateSizes(message.Sizes);
+                    setBaseSize(message.BaseSize)
                     updateRatio(message.Ratio);
                     setLocalStyles(message.localStyles);
                     setRound(message.Round);
@@ -184,6 +187,7 @@ const App = ({ }) => {
                         <Form
                             Sizes={Sizes}
                             baseSize={Group[currentGroup].textProps.fontSize}
+                            BaseSize={BaseSize}
                             setBaseSize={setBaseFontSize}
                             setRatio={setTypescaleRatio}
                             handlePreviewUpdate={handlePreviewUpdate}
@@ -231,6 +235,7 @@ const App = ({ }) => {
                                     <div key={idx}>
                                         <Preview
                                             Sizes={Sizes}
+                                            BaseSize={BaseSize}
                                             Ratio={Ratio}
                                             currentStep={currentStep}
                                             round={round}

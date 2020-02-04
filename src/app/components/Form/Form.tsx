@@ -34,6 +34,7 @@ interface FormProps {
     onClickSize: (args?: any) => void;
     setNickname: ({ nickname }: { nickname: string }) => void;
     round?: boolean;
+    BaseSize: number;
     ratio: number;
     baseFontName: {
         family: string;
@@ -58,6 +59,7 @@ const Form = (props: FormProps) => {
         onClickSize,
         setNickname,
         nickname,
+        BaseSize,
         ratio,
         round,
         baseFontName,
@@ -210,7 +212,7 @@ const Form = (props: FormProps) => {
                                 .sort((a, b) => +a - +b)
                                 .map(key => {
                                     const Size = Sizes[key];
-                                    const actualSize = getComputedFontSize({ step: Size.step, baseSize, ratio, round });
+                                    const actualSize = getComputedFontSize({ step: Size.step, baseSize: BaseSize, ratio, round });
 
                                     return (
                                         <div key={key} className="size">

@@ -59,6 +59,7 @@ export const defaultSizes = {
     },
 };
 
+export const defaultBaseSize = 16;
 export const defaultRatio = 1.2;
 
 export const defaultNickname = 'Base';

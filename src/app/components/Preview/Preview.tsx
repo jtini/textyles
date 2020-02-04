@@ -52,6 +52,7 @@ interface PreviewProps {
         textStyleId?: string
     },
     Sizes: any;
+    BaseSize: number;
     Ratio: number;
     currentStep: number;
     round: boolean;
@@ -59,7 +60,7 @@ interface PreviewProps {
 }
 
 const Preview = (props: PreviewProps) => {
-    const { nickname, textProps, Sizes, Ratio, currentStep, round, sidebar } = props;
+    const { nickname, textProps, Sizes, BaseSize, Ratio, currentStep, round, sidebar } = props;
     const splitStyle = textProps.fontName.style.split(' ');
     let style = 'normal';
     if (textProps.fontName.style.toLowerCase().indexOf('italic') > -1) {
@@ -91,7 +92,7 @@ const Preview = (props: PreviewProps) => {
                     const Size = Sizes[key];
                     const actualSize = getComputedFontSize({
                         step: Size.step,
-                        baseSize: textProps.fontSize,
+                        baseSize: BaseSize,
                         ratio: Ratio,
                         round,
                     });

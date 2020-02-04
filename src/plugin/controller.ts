@@ -1,10 +1,11 @@
 import { getComputedFontSize } from '../app/lib/utils';
-import { defaultBaseTextProps, defaultGroup, defaultSizes, defaultRatio, defaultNickname } from './properties';
+import { defaultBaseTextProps, defaultGroup, defaultSizes, defaultBaseSize, defaultRatio, defaultNickname } from './properties';
 
 // Whatever gets sent up from App should match this
 // App should always send up base text props
 let BaseTextProps = { ...defaultBaseTextProps };
 let Group = [...defaultGroup];
+let BaseSize = defaultBaseSize;
 let Ratio = defaultRatio;
 let Sizes = { ...defaultSizes };
 let Nickname = defaultNickname;
@@ -101,6 +102,7 @@ figma.ui.postMessage({
     message: {
         Group,
         BaseTextProps,
+        BaseSize,
         Ratio,
         Sizes,
         Nickname,
@@ -123,6 +125,13 @@ figma.ui.onmessage = msg => {
                 ...msg.data.BaseTextProps,
             };
         }
+
+        // If the message updates the base size
+        if (msg.data.BaseSize) {
+            console.log('controller: update Base Size');
+            BaseSize = msg.data.BaseSize;
+        }
+
         // If the message updates the ratio
         if (msg.data.Ratio) {
             console.log('controller: update Ratio');
@@ -176,6 +185,7 @@ figma.ui.onmessage = msg => {
         type: 'update-interface',
         message: {
             BaseTextProps,
+            BaseSize,
             Ratio,
             Group,
             Sizes,
@@ -234,7 +244,7 @@ figma.ui.onmessage = msg => {
                         ...group.textProps,
                         fontSize: getComputedFontSize({
                             step: size.step,
-                            baseSize: group.textProps.fontSize,
+                            baseSize: BaseSize,
                             ratio: Ratio,
                             // TODO: Make "Round" configurable
                             round: Round,

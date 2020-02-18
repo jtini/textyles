@@ -154,6 +154,10 @@ const App = ({ }) => {
             },
             '*'
         );
+        // This is kinda icky, but nothing is making a network request so it should be fine
+        setTimeout(() => {
+            setCurrentGroup(Group.length)
+        }, 10)
     }, []);
 
     React.useEffect(() => {
@@ -191,14 +195,6 @@ const App = ({ }) => {
             }
         };
     }, []);
-
-    // TODO: Figure out how to advance to the new group when it's created
-    // React.useEffect(() => {
-    //     console.log('React.useEffect', { Group })
-    //     setCurrentGroup(Group.length - 1)
-    // }, [Group])
-
-    console.log({ localStyles })
 
 
     return (

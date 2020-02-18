@@ -123,15 +123,16 @@ const Form = (props: FormProps) => {
             enableReinitialize
             validate={values => {
                 const errors = {};
-
+                console.log({ values })
                 return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
+                console.log({ values, setSubmitting })
                 handleGenerateStyles();
                 return null;
             }}
         >
-            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+            {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
                 <form className="sidebar__inner" onSubmit={handleSubmit}>
                     <div className="sidebar__scrollable">
 

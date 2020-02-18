@@ -1,5 +1,5 @@
 import React from 'react';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 
 interface SizeDetailProps {
     Sizes: any;
@@ -20,12 +20,12 @@ const SIZE_DEFAULT_NAMES = {
 
 const SizeDetail = (props: SizeDetailProps) => {
     // TODO: See if we already have the size step
-    const {Sizes, name, initialStep, handleGoBack} = props;
+    const { Sizes, name, initialStep, handleGoBack } = props;
 
     const [lastSavedSize, setLastSaved] = React.useState({});
 
-    const handleAddSize = React.useCallback((data: {name: string; step: number}) => {
-        const {name, step} = data;
+    const handleAddSize = React.useCallback((data: { name: string; step: number }) => {
+        const { name, step } = data;
         parent.postMessage(
             {
                 pluginMessage: {
@@ -45,8 +45,8 @@ const SizeDetail = (props: SizeDetailProps) => {
     }, []);
 
     const handleUpdateSize = React.useCallback(
-        (data: {prevSize: {name: string; step: number}; newSize: {name: string; step: number}}) => {
-            const {prevSize, newSize} = data;
+        (data: { prevSize: { name: string; step: number }; newSize: { name: string; step: number } }) => {
+            const { prevSize, newSize } = data;
             parent.postMessage(
                 {
                     pluginMessage: {
@@ -63,7 +63,7 @@ const SizeDetail = (props: SizeDetailProps) => {
         []
     );
 
-    const handleRemoveSize = React.useCallback(({size}: {size: {name: string; step: number}}) => {
+    const handleRemoveSize = React.useCallback(({ size }: { size: { name: string; step: number } }) => {
         parent.postMessage(
             {
                 pluginMessage: {
@@ -85,10 +85,11 @@ const SizeDetail = (props: SizeDetailProps) => {
             }}
             validate={values => {
                 const errors = {};
-
+                console.log({ values })
                 return errors;
             }}
-            onSubmit={(values, {setSubmitting}) => {
+            onSubmit={(values, { setSubmitting }) => {
+                console.log({ values, setSubmitting })
                 if (Sizes[initialStep]) {
                     // Update it
                     handleUpdateSize({
@@ -118,7 +119,7 @@ const SizeDetail = (props: SizeDetailProps) => {
                 return null;
             }}
         >
-            {({values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting}) => (
+            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
                 <>
                     <section className="sidebar-section">
                         <div className="flex-wrapper">

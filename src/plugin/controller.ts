@@ -135,6 +135,12 @@ figma.ui.onmessage = msg => {
                     textProps: msg.data.textProps
                 }
             ];
+            figma.ui.postMessage({
+                type: 'after-add-group',
+                message: {
+                    Group
+                },
+            });
             break;
         case 'set-rounding':
             console.log('set-rounding');

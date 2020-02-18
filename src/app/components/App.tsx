@@ -154,10 +154,6 @@ const App = ({ }) => {
             },
             '*'
         );
-        // This is kinda icky, but nothing is making a network request so it should be fine
-        setTimeout(() => {
-            setCurrentGroup(Group.length)
-        }, 10)
     }, []);
 
     React.useEffect(() => {
@@ -166,6 +162,11 @@ const App = ({ }) => {
             const { type, message } = event.data.pluginMessage;
 
             switch (type) {
+                case 'after-add-group':
+                    console.log('after-add-group', message.Group);
+                    setGroup(message.Group)
+                    setCurrentGroup(message.Group.length - 1)
+                    break
                 case 'fonts-available':
                     console.log('fonts-available');
                     setAvailableFonts(message.availableFonts)
@@ -174,7 +175,6 @@ const App = ({ }) => {
                     // Update local BaseTextProps
                     console.log('update-interface', { message });
                     setBaseTextProps(message.BaseTextProps);
-                    setGroup(message.Group);
                     updateSizes(message.Sizes);
                     setBaseSize(message.BaseSize)
                     updateRatio(message.Ratio);
@@ -195,7 +195,6 @@ const App = ({ }) => {
             }
         };
     }, []);
-
 
     return (
         <div className="wrapper type--pos-small-normal">

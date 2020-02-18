@@ -247,6 +247,10 @@ button + button {
     margin-bottom: 12px;
 }
 
+.tabs .button--secondary {
+    float: right;
+}
+
 .tab {
     position: relative;
     background-color: transparent;

@@ -198,6 +198,8 @@ const App = ({ }) => {
     //     setCurrentGroup(Group.length - 1)
     // }, [Group])
 
+    console.log({ localStyles })
+
 
     return (
         <div className="wrapper type--pos-small-normal">

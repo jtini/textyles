@@ -27,7 +27,7 @@ async function getAvailableFonts() {
 
 async function buildTypeStyles(styles) {
     // const textStyles = figma.getLocalTextStyles();
-    Object.keys(styles).forEach(async styleKey => {
+    Object.keys(styles).forEach(async (styleKey, idx) => {
         const style = styles[styleKey];
         // const currentStyle = textStyles.find(textStyle => textStyle.description === style.name);
 
@@ -50,6 +50,10 @@ async function buildTypeStyles(styles) {
         // TODO: Update the current style
         // NOTE: API support is pendint
         // }
+
+        if (idx + 1 === Object.keys(styles).length) {
+            figma.notify(`${Object.keys(styles).length} text styles created`)
+        }
     });
 }
 
@@ -120,6 +124,7 @@ figma.ui.postMessage({
 figma.ui.onmessage = msg => {
     console.log('figma.ui.onmessage, before: ', { BaseTextProps, Ratio, Sizes });
 
+    let latestLocalStyles = figma.getLocalTextStyles();
     switch (msg.type) {
         case 'add-group':
             console.log('add-group');
@@ -241,22 +246,18 @@ figma.ui.onmessage = msg => {
             // figma.closePlugin();
             break;
         case 'clear-local-styles':
-            console.log('clear-local-styles');
-            Object.keys(localStyles).forEach(key => {
-                const id = localStyles[key].id;
+            console.log('clear-local-styles', { latestLocalStyles });
+            latestLocalStyles.forEach(style => {
+                console.log('const id = style.id;')
+                const id = style.id;
+                console.log('const thisStyle = figma.getStyleById(id);')
                 const thisStyle = figma.getStyleById(id);
+                console.log('thisStyle.remove();', { thisStyle })
                 thisStyle.remove();
             });
-            figma.ui.postMessage({
-                type: 'update-interface',
-                message: {
-                    BaseTextProps,
-                    Ratio,
-                    Sizes,
-                    Nickname,
-                    localStyles: [],
-                },
-            });
+            latestLocalStyles = [];
+            figma.notify('Local text styles cleared')
+
             break;
         default:
             console.log('Figma UI Sent a Message: ', { msg });
@@ -272,7 +273,7 @@ figma.ui.onmessage = msg => {
             Group,
             Sizes,
             Nickname,
-            localStyles,
+            localStyles: latestLocalStyles,
             Round,
         },
     });

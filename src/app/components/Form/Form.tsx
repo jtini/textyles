@@ -123,11 +123,11 @@ const Form = (props: FormProps) => {
             enableReinitialize
             validate={values => {
                 const errors = {};
-                console.log({ values })
+                // console.log({ values })
                 return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
-                console.log({ values, setSubmitting })
+                // console.log({ values, setSubmitting })
                 handleGenerateStyles();
                 return null;
             }}

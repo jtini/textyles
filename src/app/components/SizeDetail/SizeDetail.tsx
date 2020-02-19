@@ -21,6 +21,8 @@ const SIZE_DEFAULT_NAMES = {
 const SizeDetail = (props: SizeDetailProps) => {
     // TODO: See if we already have the size step
     const { Sizes, name, initialStep, handleGoBack } = props;
+    const lineHeight = Sizes[initialStep] && Sizes[initialStep].lineHeight;
+    console.log({ lineHeight })
 
     const [lastSavedSize, setLastSaved] = React.useState({});
 
@@ -82,14 +84,15 @@ const SizeDetail = (props: SizeDetailProps) => {
             initialValues={{
                 name: name || SIZE_DEFAULT_NAMES[initialStep] || initialStep,
                 step: initialStep,
+                lineHeight: lineHeight.unit === 'AUTO' ? 'Auto' : lineHeight.value
             }}
             validate={values => {
                 const errors = {};
-                console.log({ values })
+                // console.log({ values })
                 return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
-                console.log({ values, setSubmitting })
+                // console.log({ values, setSubmitting })
                 if (Sizes[initialStep]) {
                     // Update it
                     handleUpdateSize({
@@ -119,7 +122,7 @@ const SizeDetail = (props: SizeDetailProps) => {
                 return null;
             }}
         >
-            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+            {({ values, setFieldValue, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
                 <>
                     <section className="sidebar-section">
                         <div className="flex-wrapper">
@@ -177,6 +180,27 @@ const SizeDetail = (props: SizeDetailProps) => {
                                         </div>
                                     </div>
                                 </div>
+                                <label htmlFor="lineHeight" className="label">
+                                    Line Height
+                                </label>
+                                <input
+                                    className="input"
+                                    type="text"
+                                    name="lineHeight"
+                                    onChange={e => {
+                                        handleChange(e);
+                                    }}
+                                    onBlur={e => {
+                                        // If the value isn't a number, set it to 'Auto'
+                                        if (!parseFloat(e.target.value) && e.target.value !== 'Auto') {
+                                            setFieldValue('lineHeight', 'Auto')
+                                        } else {
+                                            // Set the Size's line height value (up in the controller)
+                                        }
+                                        handleBlur(e)
+                                    }}
+                                    value={values.lineHeight}
+                                />
                             </section>
                         </div>
                         <footer className="sidebar-footer">

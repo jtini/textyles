@@ -31,22 +31,37 @@ export const defaultSizes = {
     0: {
         name: 'Body',
         step: 0,
+        lineHeight: {
+            unit: 'AUTO',
+        }
     },
     1: {
         name: 'Subheading',
         step: 1,
+        lineHeight: {
+            unit: 'AUTO',
+        }
     },
     2: {
         name: 'Heading',
         step: 2,
+        lineHeight: {
+            unit: 'AUTO',
+        }
     },
     3: {
         name: 'Subtitle',
         step: 3,
+        lineHeight: {
+            unit: 'AUTO',
+        }
     },
     4: {
         name: 'Title',
         step: 4,
+        lineHeight: {
+            unit: 'AUTO',
+        }
     },
 };
 

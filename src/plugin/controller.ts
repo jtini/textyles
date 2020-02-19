@@ -33,7 +33,7 @@ async function buildTypeStyles(styles) {
 
         // if (typeof currentStyle === 'undefined') {
         // There is no existing style, so make a new one
-        console.log('buildTypeStyles, style: ', { style });
+
         await figma.loadFontAsync(style.fontName);
         const newStyle = figma.createTextStyle();
         newStyle.name = style.name;
@@ -48,7 +48,7 @@ async function buildTypeStyles(styles) {
         // } else {
         // This style already exists
         // TODO: Update the current style
-        // NOTE: API support is pendint
+        // NOTE: API support is pending
         // }
 
         if (idx + 1 === Object.keys(styles).length) {
@@ -97,6 +97,8 @@ if (currentSelection.length === 1 && currentSelection[0].type === 'TEXT') {
         }
 
         BaseSize = fontSize;
+
+        console.log({ Sizes })
     }
 }
 
@@ -122,12 +124,12 @@ figma.ui.postMessage({
 });
 
 figma.ui.onmessage = msg => {
-    console.log('figma.ui.onmessage, before: ', { BaseTextProps, Ratio, Sizes });
+    // console.log('figma.ui.onmessage, before: ', { BaseTextProps, Ratio, Sizes });
 
     let latestLocalStyles = figma.getLocalTextStyles();
     switch (msg.type) {
         case 'add-group':
-            console.log('add-group');
+            // console.log('add-group');
             Group = [
                 ...Group,
                 {
@@ -143,22 +145,22 @@ figma.ui.onmessage = msg => {
             });
             break;
         case 'set-rounding':
-            console.log('set-rounding');
+            // console.log('set-rounding');
             Round = msg.data.round === 'false' ? false : true;
             break;
         case 'update-nickname':
-            console.log('update-nickname');
+            // console.log('update-nickname');
             Group[msg.data.groupIdx] = {
                 ...Group[msg.data.groupIdx],
                 nickname: msg.data.Nickname
             }
             break;
         case 'set-base-font-size':
-            console.log('set-base-font-size');
+            // console.log('set-base-font-size');
             BaseSize = msg.data.BaseSize;
             break;
         case 'set-base-font-style':
-            console.log('set-base-font-style');
+            // console.log('set-base-font-style');
             Group[msg.data.groupIdx] = {
                 ...Group[msg.data.groupIdx],
                 textProps: {
@@ -168,7 +170,7 @@ figma.ui.onmessage = msg => {
             }
             break;
         case 'set-base-ratio':
-            console.log('set-base-ratio');
+            // console.log('set-base-ratio');
             Ratio = msg.data.Ratio;
             break;
         case 'request-preview':
@@ -178,17 +180,17 @@ figma.ui.onmessage = msg => {
             });
             break;
         case 'update-preview':
-            console.log('update-preview');
+            // console.log('update-preview');
             break;
         case 'add-size':
-            console.log('add-size');
+            // console.log('add-size');
             Sizes = {
                 ...Sizes,
                 ...msg.data.Sizes,
             };
             break;
         case 'update-size': {
-            console.log('update-size');
+            // console.log('update-size');
             let newSizes = { ...Sizes };
             delete newSizes[msg.data.prevSize.step];
             newSizes = {
@@ -204,7 +206,7 @@ figma.ui.onmessage = msg => {
             break;
         }
         case 'remove-size':
-            console.log('remove-size');
+            // console.log('remove-size');
             let newSizes = { ...Sizes };
             delete newSizes[msg.data.removeSize.step];
             Sizes = {
@@ -212,7 +214,7 @@ figma.ui.onmessage = msg => {
             };
             break;
         case 'generate-styles':
-            console.log('generate-styles');
+            // console.log('generate-styles');
             let TextStyles = {};
 
             Group.forEach(group => {
@@ -231,6 +233,7 @@ figma.ui.onmessage = msg => {
                             // TODO: Make "Round" configurable
                             round: Round,
                         }),
+                        lineHeight: size.lineHeight
                     };
                     // console.log('generate-styles, textStyle: ', { textStyle });
 
@@ -246,19 +249,16 @@ figma.ui.onmessage = msg => {
             })
 
 
-            console.log('generate-styles, TextStyles: ', { TextStyles });
+            // console.log('generate-styles, TextStyles: ', { TextStyles });
             buildTypeStyles(TextStyles);
             // NOTE: Closing the plugin at this point can cause styles to not be built
             // figma.closePlugin();
             break;
         case 'clear-local-styles':
-            console.log('clear-local-styles', { latestLocalStyles });
+            // console.log('clear-local-styles', { latestLocalStyles });
             latestLocalStyles.forEach(style => {
-                console.log('const id = style.id;')
                 const id = style.id;
-                console.log('const thisStyle = figma.getStyleById(id);')
                 const thisStyle = figma.getStyleById(id);
-                console.log('thisStyle.remove();', { thisStyle })
                 thisStyle.remove();
             });
             latestLocalStyles = [];

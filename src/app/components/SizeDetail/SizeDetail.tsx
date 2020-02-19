@@ -25,7 +25,7 @@ const SizeDetail = (props: SizeDetailProps) => {
     const letterSpacing = Sizes[initialStep] && Sizes[initialStep].letterSpacing;
     console.log({ lineHeight })
 
-    const [lastSavedSize, setLastSaved] = React.useState({});
+    const [lastSavedSize, setLastSaved] = React.useState(Sizes[initialStep]);
 
     const handleAddSize = React.useCallback((data: { name: string; step: number }) => {
         const { name, step } = data;
@@ -48,7 +48,7 @@ const SizeDetail = (props: SizeDetailProps) => {
     }, []);
 
     const handleUpdateSize = React.useCallback(
-        (data: { prevSize: { name: string; step: number }; newSize: { name: string; step: number } }) => {
+        (data: { prevSize: { name: string; step: number, lineHeight: LineHeight }; newSize: { name: string; step: number, lineHeight: LineHeight } }) => {
             const { prevSize, newSize } = data;
             parent.postMessage(
                 {
@@ -102,6 +102,13 @@ const SizeDetail = (props: SizeDetailProps) => {
                         newSize: {
                             name: values.name,
                             step: values.step,
+                            lineHeight: {
+                                unit: 'AUTO'
+                            },
+                            letterSpacing: {
+                                value: 0,
+                                unit: 'PIXELS'
+                            }
                         },
                     });
                 } else {
@@ -117,6 +124,9 @@ const SizeDetail = (props: SizeDetailProps) => {
                 setLastSaved({
                     name: values.name,
                     step: values.step,
+                    lineHeight: {
+                        unit: 'AUTO'
+                    }
                 });
 
                 handleGoBack();

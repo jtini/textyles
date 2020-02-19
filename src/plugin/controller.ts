@@ -85,6 +85,13 @@ if (currentSelection.length === 1 && currentSelection[0].type === 'TEXT') {
 
         BaseSize = fontSize;
     }
+
+    Object.keys(Sizes).forEach(key => {
+        const Size = Sizes[key];
+        Size.lineHeight = lineHeight
+    })
+
+    console.log({ Sizes })
 }
 
 figma.showUI(__html__, {
@@ -166,6 +173,7 @@ figma.ui.onmessage = msg => {
             };
             break;
         case 'update-size': {
+            console.log('update-size', { msg })
             let newSizes = { ...Sizes };
             delete newSizes[msg.data.prevSize.step];
             newSizes = {
@@ -173,11 +181,14 @@ figma.ui.onmessage = msg => {
                 [msg.data.newSize.step]: {
                     step: msg.data.newSize.step,
                     name: msg.data.newSize.name,
+                    lineHeight: msg.data.newSize.lineHeight,
+                    letterSpacing: msg.data.newSize.letterSpacing
                 },
             };
             Sizes = {
                 ...newSizes,
             };
+            console.log('update-size', { Sizes })
             break;
         }
         case 'remove-size':

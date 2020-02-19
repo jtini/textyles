@@ -1,6 +1,10 @@
 import React from 'react';
 import { Formik } from 'formik';
 
+// TODO: Use input masking on lineheight input like Figma does to keep the "%" intact
+// TODO: Suggest lineheight values based on what is already in the Sizes array
+// TODO: Save on blur (maybe, or on go back)
+
 interface SizeDetailProps {
     Sizes: any;
     initialStep: number | string;
@@ -23,7 +27,6 @@ const SizeDetail = (props: SizeDetailProps) => {
     const { Sizes, name, initialStep, handleGoBack } = props;
     const lineHeight = Sizes[initialStep] && Sizes[initialStep].lineHeight;
     const letterSpacing = Sizes[initialStep] && Sizes[initialStep].letterSpacing;
-    console.log({ lineHeight })
 
     const [lastSavedSize, setLastSaved] = React.useState(Sizes[initialStep]);
 
@@ -85,12 +88,15 @@ const SizeDetail = (props: SizeDetailProps) => {
             initialValues={{
                 name: name || SIZE_DEFAULT_NAMES[initialStep] || initialStep,
                 step: initialStep,
-                lineHeight: (typeof lineHeight === 'undefined' || lineHeight.unit === 'AUTO') ? 'Auto' : lineHeight.unit === 'PERCENT' ? `${Math.round(lineHeight.value)}%` : Math.round(lineHeight.value),
+                lineHeight: (typeof lineHeight === 'undefined' || lineHeight.unit === 'AUTO') ?
+                    'Auto' :
+                    lineHeight.unit === 'PERCENT' ?
+                        `${Math.round(lineHeight.value).toString()}%` :
+                        Math.round(lineHeight.value).toString(),
                 letterSpacing: typeof letterSpacing === 'undefined' ? 0 : letterSpacing.value
             }}
             validate={values => {
                 const errors = {};
-                // console.log({ values })
                 return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
@@ -198,6 +204,7 @@ const SizeDetail = (props: SizeDetailProps) => {
                                                 value={values.name}
                                             />
                                         </div>
+
                                         <div className="flex-item">
                                             <label htmlFor="step" className="label">
                                                 Step
@@ -211,8 +218,10 @@ const SizeDetail = (props: SizeDetailProps) => {
                                                 }}
                                                 onBlur={handleBlur}
                                                 value={values.step}
+                                                readOnly
                                             />
                                         </div>
+
                                     </div>
                                 </div>
                                 <label htmlFor="lineHeight" className="label">
@@ -222,6 +231,18 @@ const SizeDetail = (props: SizeDetailProps) => {
                                     className="input"
                                     type="text"
                                     name="lineHeight"
+                                    onFocus={e => {
+                                        if (e.target.value !== 'Auto') {
+                                            if (e.target.value.charAt(e.target.value.length - 1) === '%') {
+                                                e.target.setSelectionRange(0, e.target.value.length - 1)
+                                            } else {
+                                                e.target.select();
+                                            }
+                                        } else {
+                                            // Delete the current value
+                                            setFieldValue('lineHeight', '')
+                                        }
+                                    }}
                                     onChange={e => {
                                         handleChange(e);
                                     }}

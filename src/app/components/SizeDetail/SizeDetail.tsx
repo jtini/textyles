@@ -85,8 +85,8 @@ const SizeDetail = (props: SizeDetailProps) => {
             initialValues={{
                 name: name || SIZE_DEFAULT_NAMES[initialStep] || initialStep,
                 step: initialStep,
-                lineHeight: lineHeight.unit === 'AUTO' ? 'Auto' : lineHeight.value,
-                letterSpacing: letterSpacing.value
+                lineHeight: (typeof lineHeight === 'undefined' || lineHeight.unit === 'AUTO') ? 'Auto' : lineHeight.unit === 'PERCENT' ? `${Math.round(lineHeight.value)}%` : Math.round(lineHeight.value),
+                letterSpacing: typeof letterSpacing === 'undefined' ? 0 : letterSpacing.value
             }}
             validate={values => {
                 const errors = {};
@@ -94,7 +94,25 @@ const SizeDetail = (props: SizeDetailProps) => {
                 return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
-                // console.log({ values, setSubmitting })
+                // Figure out the new lineheight
+                // Default to pixels to match Figma behavior
+                let lineHeight: LineHeight = {
+                    unit: 'AUTO'
+                }
+                if (values.lineHeight.toLowerCase() !== 'auto') {
+
+                    lineHeight = {
+                        unit: 'PIXELS',
+                        value: parseFloat(values.lineHeight)
+                    }
+
+                    if (values.lineHeight.charAt(values.lineHeight.length - 1) === '%') {
+                        lineHeight = {
+                            unit: 'PERCENT',
+                            value: parseFloat(values.lineHeight)
+                        }
+                    }
+                }
                 if (Sizes[initialStep]) {
                     // Update it
                     handleUpdateSize({
@@ -102,9 +120,7 @@ const SizeDetail = (props: SizeDetailProps) => {
                         newSize: {
                             name: values.name,
                             step: values.step,
-                            lineHeight: {
-                                unit: 'AUTO'
-                            },
+                            lineHeight,
                             letterSpacing: {
                                 value: 0,
                                 unit: 'PIXELS'
@@ -116,6 +132,13 @@ const SizeDetail = (props: SizeDetailProps) => {
                     handleAddSize({
                         name: values.name,
                         step: values.step,
+                        lineHeight: {
+                            unit: 'AUTO'
+                        },
+                        letterSpacing: {
+                            value: 0,
+                            unit: 'PIXELS'
+                        }
                     });
                     // setSizeExists(true);
                 }

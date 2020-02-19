@@ -13,16 +13,16 @@ let Nickname = defaultNickname;
 let Round = true;
 
 // This may be useful for setting the fonts in the actual plugin UI
-// async function getAvailableFonts() {
-//     const availableFonts = await figma.listAvailableFontsAsync();
-//     figma.ui.postMessage({
-//         type: 'fonts-available',
-//         message: {
-//             availableFonts
-//         },
-//     });
-//     return availableFonts;
-// }
+async function getAvailableFonts() {
+    const availableFonts = await figma.listAvailableFontsAsync();
+    figma.ui.postMessage({
+        type: 'fonts-available',
+        message: {
+            availableFonts
+        },
+    });
+    return availableFonts;
+}
 
 async function buildTypeStyles(styles) {
     Object.keys(styles).forEach(async (styleKey, idx) => {
@@ -99,7 +99,7 @@ figma.showUI(__html__, {
     height: 600,
 });
 
-// getAvailableFonts()
+getAvailableFonts()
 
 // Hydrate the UI
 figma.ui.postMessage({
@@ -173,7 +173,6 @@ figma.ui.onmessage = msg => {
             };
             break;
         case 'update-size': {
-            console.log('update-size', { msg })
             let newSizes = { ...Sizes };
             delete newSizes[msg.data.prevSize.step];
             newSizes = {

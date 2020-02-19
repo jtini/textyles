@@ -33,6 +33,10 @@ export const defaultSizes = {
         step: 0,
         lineHeight: {
             unit: 'AUTO',
+        },
+        letterSpacing: {
+            value: 0,
+            unit: 'PIXELS'
         }
     },
     1: {
@@ -40,6 +44,10 @@ export const defaultSizes = {
         step: 1,
         lineHeight: {
             unit: 'AUTO',
+        },
+        letterSpacing: {
+            value: 0,
+            unit: 'PIXELS'
         }
     },
     2: {
@@ -47,6 +55,10 @@ export const defaultSizes = {
         step: 2,
         lineHeight: {
             unit: 'AUTO',
+        },
+        letterSpacing: {
+            value: 0,
+            unit: 'PIXELS'
         }
     },
     3: {
@@ -54,6 +66,10 @@ export const defaultSizes = {
         step: 3,
         lineHeight: {
             unit: 'AUTO',
+        },
+        letterSpacing: {
+            value: 0,
+            unit: 'PIXELS'
         }
     },
     4: {
@@ -61,6 +77,10 @@ export const defaultSizes = {
         step: 4,
         lineHeight: {
             unit: 'AUTO',
+        },
+        letterSpacing: {
+            value: 0,
+            unit: 'PIXELS'
         }
     },
 };

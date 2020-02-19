@@ -22,6 +22,7 @@ const SizeDetail = (props: SizeDetailProps) => {
     // TODO: See if we already have the size step
     const { Sizes, name, initialStep, handleGoBack } = props;
     const lineHeight = Sizes[initialStep] && Sizes[initialStep].lineHeight;
+    const letterSpacing = Sizes[initialStep] && Sizes[initialStep].letterSpacing;
     console.log({ lineHeight })
 
     const [lastSavedSize, setLastSaved] = React.useState({});
@@ -84,7 +85,8 @@ const SizeDetail = (props: SizeDetailProps) => {
             initialValues={{
                 name: name || SIZE_DEFAULT_NAMES[initialStep] || initialStep,
                 step: initialStep,
-                lineHeight: lineHeight.unit === 'AUTO' ? 'Auto' : lineHeight.value
+                lineHeight: lineHeight.unit === 'AUTO' ? 'Auto' : lineHeight.value,
+                letterSpacing: letterSpacing.value
             }}
             validate={values => {
                 const errors = {};
@@ -191,6 +193,8 @@ const SizeDetail = (props: SizeDetailProps) => {
                                         handleChange(e);
                                     }}
                                     onBlur={e => {
+                                        // Maybe we can highlight this in the preview?
+
                                         // If the value isn't a number, set it to 'Auto'
                                         if (!parseFloat(e.target.value) && e.target.value !== 'Auto') {
                                             setFieldValue('lineHeight', 'Auto')
@@ -200,6 +204,23 @@ const SizeDetail = (props: SizeDetailProps) => {
                                         handleBlur(e)
                                     }}
                                     value={values.lineHeight}
+                                />
+                                <label htmlFor="letterSpacing" className="label">
+                                    Letter Spacing
+                                </label>
+                                <input
+                                    className="input"
+                                    type="text"
+                                    name="letterSpacing"
+                                    onChange={e => {
+                                        handleChange(e);
+                                    }}
+                                    onBlur={e => {
+                                        // Set the Size's letter spacing value (up in the controller)
+                                        // This does need to be reflected in the preview
+                                        handleBlur(e)
+                                    }}
+                                    value={values.letterSpacing}
                                 />
                             </section>
                         </div>

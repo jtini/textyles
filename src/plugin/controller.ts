@@ -233,7 +233,8 @@ figma.ui.onmessage = msg => {
                             // TODO: Make "Round" configurable
                             round: Round,
                         }),
-                        lineHeight: size.lineHeight
+                        lineHeight: size.lineHeight,
+                        letterSpacing: size.letterSpacing
                     };
                     // console.log('generate-styles, textStyle: ', { textStyle });
 

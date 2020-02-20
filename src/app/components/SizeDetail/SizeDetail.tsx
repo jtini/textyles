@@ -1,9 +1,9 @@
 import React from 'react';
 import { Formik } from 'formik';
 
-// TODO: Use input masking on lineheight input like Figma does to keep the "%" intact
 // TODO: Suggest lineheight values based on what is already in the Sizes array
 // TODO: Save on blur (maybe, or on go back)
+// TODO: Add support for letterspacing as %
 
 interface SizeDetailProps {
     Sizes: any;

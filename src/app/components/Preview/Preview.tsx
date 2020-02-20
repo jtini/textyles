@@ -96,6 +96,7 @@ const Preview = (props: PreviewProps) => {
                         ratio: Ratio,
                         round,
                     });
+                    console.log('Preview', { Size })
                     return (
                         <div
                             key={key}
@@ -117,6 +118,10 @@ const Preview = (props: PreviewProps) => {
                                     fontFamily: `"${textProps.fontName.family}"`,
                                     fontWeight: weight,
                                     fontStyle: style,
+                                    lineHeight: Size.lineHeight.unit === 'AUTO' ? "normal" :
+                                        Size.lineHeight.unit === 'PERCENT' ? `${Size.lineHeight.value / 100}` : `${Size.lineHeight.value}px`,
+                                    letterSpacing: Size.letterSpacing.unit === 'PERCENT' ? `${Size.letterSpacing.value / 100}em` :
+                                        `${Size.letterSpacing.value}px`
                                 }}
                             >
                                 The quick brown fox jumps over the lazy dog

@@ -91,7 +91,6 @@ if (currentSelection.length === 1 && currentSelection[0].type === 'TEXT') {
         Size.lineHeight = lineHeight
     })
 
-    console.log({ Sizes })
 }
 
 figma.showUI(__html__, {

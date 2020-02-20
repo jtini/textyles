@@ -105,6 +105,10 @@ const SizeDetail = (props: SizeDetailProps) => {
                 let lineHeight: LineHeight = {
                     unit: 'AUTO'
                 }
+                let letterSpacing = {
+                    unit: 'PIXELS',
+                    value: 0
+                }
                 if (values.lineHeight.toLowerCase() !== 'auto') {
 
                     lineHeight = {
@@ -119,6 +123,15 @@ const SizeDetail = (props: SizeDetailProps) => {
                         }
                     }
                 }
+
+                if (!!values.letterSpacing) {
+                    letterSpacing = {
+                        unit: 'PIXELS',
+                        value: parseFloat(values.letterSpacing)
+                    }
+                }
+
+
                 if (Sizes[initialStep]) {
                     // Update it
                     handleUpdateSize({
@@ -127,10 +140,7 @@ const SizeDetail = (props: SizeDetailProps) => {
                             name: values.name,
                             step: values.step,
                             lineHeight,
-                            letterSpacing: {
-                                value: 0,
-                                unit: 'PIXELS'
-                            }
+                            letterSpacing
                         },
                     });
                 } else {
@@ -138,13 +148,8 @@ const SizeDetail = (props: SizeDetailProps) => {
                     handleAddSize({
                         name: values.name,
                         step: values.step,
-                        lineHeight: {
-                            unit: 'AUTO'
-                        },
-                        letterSpacing: {
-                            value: 0,
-                            unit: 'PIXELS'
-                        }
+                        lineHeight,
+                        letterSpacing
                     });
                     // setSizeExists(true);
                 }
@@ -153,9 +158,8 @@ const SizeDetail = (props: SizeDetailProps) => {
                 setLastSaved({
                     name: values.name,
                     step: values.step,
-                    lineHeight: {
-                        unit: 'AUTO'
-                    }
+                    lineHeight,
+                    letterSpacing
                 });
 
                 handleGoBack();

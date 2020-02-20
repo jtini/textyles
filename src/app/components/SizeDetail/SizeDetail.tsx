@@ -4,6 +4,7 @@ import { Formik } from 'formik';
 // TODO: Suggest lineheight values based on what is already in the Sizes array
 // TODO: Save on blur (maybe, or on go back)
 // TODO: Add support for letterspacing as %
+// TODO: Use up and down arrows (and shift key?) for incrementing values
 
 interface SizeDetailProps {
     Sizes: any;

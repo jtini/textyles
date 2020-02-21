@@ -1,4 +1,5 @@
 import * as React from 'react';
+import CreateStyles from './CreateStyles/CreateStyles'
 import CleanupStyles from './CleanupStyles/CleanupStyles'
 import '../styles/ui.css';
 import '../styles/figma-plugin-ds.min.css';
@@ -6,6 +7,21 @@ import '../styles/figma-plugin-ds.min.css';
 const App2 = () => {
     const [selection, setSelection] = React.useState(null);
     const [textyles, setTextyles] = React.useState(null);
+
+    const onCreateStyles = React.useCallback((styles: TextNode[]) => {
+        console.log('onCreateStyles', { styles })
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'create-styles',
+                    data: {
+                        styles,
+                    },
+                },
+            },
+            '*'
+        );
+    }, []);
 
     const onDeleteStyles = React.useCallback((styles: string[]) => {
         parent.postMessage(
@@ -33,7 +49,7 @@ const App2 = () => {
                     setTextyles(message.styles)
                     return;
                 default:
-                // console.log({ type, message })
+                    console.log({ type, message })
             }
         }
     }, [])
@@ -41,24 +57,8 @@ const App2 = () => {
     return (
         <div>
             {selection &&
-                <div>
-                    {selection.length > 0 ?
-                        <div>
-                            {selection.map(layer => {
-                                return (
-                                    <div key={layer.id}>
-                                        <p>{layer.name}</p>
-                                        <p>{`${layer.fontSize.toString()}px`}</p>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        :
-                        <h2>No text layers are selected</h2>
-                    }
-                </div>
+                <CreateStyles selection={selection} handleSubmit={onCreateStyles} />
             }
-
             {textyles &&
                 <CleanupStyles textyles={textyles} handleSubmit={onDeleteStyles} />
             }

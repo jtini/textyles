@@ -27,8 +27,24 @@ body {
     box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
+.p-0 {
+    padding: 0.5rem;
+}
+
+.px-0 {
+    padding: 0 0.5rem;
+}
+
 .p-1 {
     padding: 1rem;
+}
+
+.px-1 {
+    padding: 0 1rem;
+}
+
+.border-top {
+    border-top: 1px solid #f0f0f0;
 }
 
 .icon {
@@ -271,5 +287,25 @@ button + button {
 
 .cleanup__body {
     padding: 0 10px;
+    overflow: scroll;
+}
+
+.textyle {
+    display: flex;
+    align-items: center;
+}
+
+.create {
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+}
+
+.create__header {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.create__body {
+    flex: 1 1 auto;
     overflow: scroll;
 }

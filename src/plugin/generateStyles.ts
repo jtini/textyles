@@ -1,4 +1,24 @@
 export default () => {
+    async function buildTypeStyles(styles) {
+        styles.forEach(async (textyle, idx) => {
+            await figma.loadFontAsync(textyle.fontName);
+            const newStyle = figma.createTextStyle();
+            newStyle.name = textyle.name;
+            newStyle.fontName = textyle.fontName;
+            newStyle.fontSize = textyle.fontSize;
+            newStyle.lineHeight = textyle.lineHeight;
+            newStyle.letterSpacing = textyle.letterSpacing;
+            newStyle.paragraphIndent = textyle.paragraphIndent;
+            newStyle.paragraphSpacing = textyle.paragraphSpacing;
+            newStyle.description = `Created by Textyles, ${new Date()}`;
+
+            if (idx === styles.length - 1) {
+                figma.notify(`${styles.length} Text Styles created`)
+                figma.closePlugin();
+            }
+        });
+    }
+
     const currentSelection = figma.currentPage.selection;
     const textLayersFromSelection = (selection: any[]) => {
         const textLayers = selection.filter(layer => layer.type === 'TEXT');
@@ -34,8 +54,8 @@ export default () => {
     const currentTextLayers = textLayersFromSelection(currentSelection)
 
     figma.showUI(__html__, {
-        width: 200,
-        height: 600,
+        width: 300,
+        height: 400,
     });
 
     figma.ui.postMessage({
@@ -55,4 +75,16 @@ export default () => {
             }
         })
     })
+
+    figma.ui.onmessage = (msg) => {
+        const { type } = msg;
+
+        switch (type) {
+            case 'create-styles':
+                buildTypeStyles(msg.data.styles);
+                return;
+            default:
+                console.log(msg.type)
+        }
+    }
 }

@@ -3,5 +3,22 @@
   "id": "804843548882105498",
   "api": "1.0.0",
   "main": "dist/code.js",
-  "ui": "dist/ui.html"
+  "ui": "dist/ui.html",
+  "menu": [
+    {
+      "name": "Generate Sizes",
+      "command": "generate-sizes"
+    },
+    {
+      "name": "Create Text Styles",
+      "command": "create-text-styles"
+    },
+    {
+      "separator": true
+    },
+    {
+      "name": "Clean up Text Styles",
+      "command": "cleanup-text-styles"
+    }
+  ]
 }

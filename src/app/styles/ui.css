@@ -241,3 +241,31 @@ button + button {
 .delete-button {
     margin-top: 12px;
 }
+
+.cleanup {
+}
+
+.cleanup__inner {
+    height: 100vh;
+    display: flex;
+    flex-flow: column;
+}
+
+.cleanup__header,
+.cleanup__footer {
+    padding: 10px;
+    background-color: #fff;
+}
+
+.cleanup__header {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.cleanup__footer {
+    border-top: 1px solid #f0f0f0;
+}
+
+.cleanup__body {
+    padding: 0 10px;
+    overflow: scroll;
+}

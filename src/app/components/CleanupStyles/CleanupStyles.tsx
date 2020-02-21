@@ -81,7 +81,7 @@ export default (props: CleaupStylesProps) => {
                     )}
                 </Formik>
                 :
-                <h2>No local Text Styles exist</h2>
+                <h2 className="p-1">No local Text Styles exist</h2>
             }
         </div>
     )

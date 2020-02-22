@@ -177,7 +177,8 @@ export default (props: GenerateSizesProps) => {
                                                         <div className="flex-wrapper preview-item__top">
                                                             <Field
                                                                 name={`sizes.${idx}.name`}
-                                                                className="simple-input"
+                                                                className="input"
+                                                                style={{ backgroundColor: '#f0f0f0' }}
                                                                 onFocus={e => {
                                                                     e.target.select()
                                                                 }}

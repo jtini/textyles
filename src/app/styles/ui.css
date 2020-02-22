@@ -309,3 +309,29 @@ button + button {
     flex: 1 1 auto;
     overflow: scroll;
 }
+
+.generate-sizes {
+    display: flex;
+    height: 100vh;
+}
+
+.generate-sizes__sidebar {
+    width: 200px;
+    height: 100%;
+}
+
+.generate-sizes__form {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.generate-sizes__preview {
+    width: 600px;
+    height: 100vh;
+    padding: 10px;
+    overflow: scroll;
+    background-color: #f0f0f0;
+}
+

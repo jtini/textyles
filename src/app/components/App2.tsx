@@ -1,11 +1,13 @@
 import * as React from 'react';
 import CreateStyles from './CreateStyles/CreateStyles'
 import CleanupStyles from './CleanupStyles/CleanupStyles'
+import GenerateSizes from './GenerateSizes/GenerateSizes'
 import '../styles/ui.css';
 import '../styles/figma-plugin-ds.min.css';
 
 const App2 = () => {
     const [selection, setSelection] = React.useState(null);
+    const [sizesSelection, setSizesSelection] = React.useState(null);
     const [textyles, setTextyles] = React.useState(null);
 
     const onCreateStyles = React.useCallback((styles: TextNode[]) => {
@@ -45,6 +47,9 @@ const App2 = () => {
                 case 'selection-change':
                     setSelection(message.selection);
                     return;
+                case 'generate-sizes:selection-change':
+                    setSizesSelection(message.selection);
+                    return;
                 case 'get-local-styles':
                     setTextyles(message.styles)
                     return;
@@ -56,6 +61,9 @@ const App2 = () => {
 
     return (
         <div>
+            {sizesSelection &&
+                <GenerateSizes selection={sizesSelection} />
+            }
             {selection &&
                 <CreateStyles selection={selection} handleSubmit={onCreateStyles} />
             }

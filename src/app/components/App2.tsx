@@ -11,6 +11,7 @@ const App2 = () => {
     const [textyles, setTextyles] = React.useState(null);
 
     const onGenerateSizes = React.useCallback((sizes: {}[]) => {
+        // Pass up info from latest selection to make sizes inherit properties from it
         parent.postMessage(
             {
                 pluginMessage: {

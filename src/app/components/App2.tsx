@@ -11,7 +11,6 @@ const App2 = () => {
     const [textyles, setTextyles] = React.useState(null);
 
     const onGenerateSizes = React.useCallback((sizes: {}[]) => {
-        console.log('onGenerateSizes', { sizes })
         parent.postMessage(
             {
                 pluginMessage: {

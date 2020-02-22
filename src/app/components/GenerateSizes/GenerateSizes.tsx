@@ -2,6 +2,8 @@ import * as React from 'react'
 import { Formik, Form, FieldArray, Field } from 'formik'
 import _ from 'lodash'
 
+// TODO: Send actual size info up to app to generate sizes with
+
 interface GenerateSizesProps {
     selection: TextNode[];
     handleSubmit: (sizes: {}[]) => void
@@ -58,9 +60,27 @@ export default (props: GenerateSizesProps) => {
                     }}
                     onSubmit={values => {
                         const { sizes } = values;
+                        let actualSizes = []
+                        sizes.forEach(size => {
+                            const fs = values.fontSize
+                            let actualSize = fs;
+                            if (size.step < 0) {
+                                const divisor = Math.pow(values.ratio, -1 * size.step)
+                                actualSize = fs / divisor
+                            } else if (size.step > 0) {
+                                const multiplier = Math.pow(values.ratio, size.step)
+                                actualSize = fs * multiplier
+                            }
+                            if (values.round) {
+                                actualSize = Math.round(actualSize)
+                            }
+                            actualSizes.push({
+                                name: size.name,
+                                fontSize: actualSize
+                            })
+                        })
 
-                        console.log({ sizes })
-                        handleSubmit([{}])
+                        handleSubmit(actualSizes)
                         return null;
                     }}
                 >
@@ -177,12 +197,13 @@ export default (props: GenerateSizesProps) => {
                                                         <div className="flex-wrapper preview-item__top">
                                                             <Field
                                                                 name={`sizes.${idx}.name`}
-                                                                className="input"
+                                                                className="flex-item input"
                                                                 style={{ backgroundColor: '#f0f0f0' }}
                                                                 onFocus={e => {
                                                                     e.target.select()
                                                                 }}
                                                             />
+                                                            <p>{`${actualSize}px`}</p>
                                                         </div>
                                                         <p
                                                             className="preview-item__sample"

@@ -62,4 +62,23 @@ export default () => {
             }
         })
     })
+
+    figma.ui.onmessage = (msg) => {
+        const { type } = msg;
+
+        switch (type) {
+            case 'generate-sizes':
+                console.log('generate-sizes', msg.data.sizes)
+                msg.data.sizes.forEach(size => {
+                    // Draw a layer
+                    // Set some copy in it
+                    // Style it to match this size
+                    // Name it with the right name
+                    // Add it below the latest one
+                })
+                return;
+            default:
+                console.log(msg.type)
+        }
+    }
 }

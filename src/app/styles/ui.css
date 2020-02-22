@@ -165,6 +165,11 @@ button + button {
     width: 100%;
 }
 
+/* .preview-item,
+.preview-item * {
+    background-color: rgba(0,0,100,0.05);
+} */
+
 .preview-item--subdued {
     opacity: 0.4;
 }
@@ -184,15 +189,14 @@ button + button {
 }
 
 .preview-item__sample {
-    margin-left: 8px;
-    margin-top: 0.5em;
+    margin: 8px 0 8px 8px;
     white-space: nowrap;
 }
 
 .preview-item + .preview-item {
-    padding-top: 16px;
+    padding-top: 8px;
     border-top: 1px solid #e5e5e5;
-    margin-top: 16px;
+    margin-top: 8px;
 }
 
 .preview-item__top {

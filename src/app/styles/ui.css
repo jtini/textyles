@@ -194,6 +194,11 @@ button + button {
     margin-top: 16px;
 }
 
+.preview-item__top {
+    align-items: center;
+    height: 24px;
+}
+
 .size {
     display: flex;
     justify-content: space-between;
@@ -262,9 +267,6 @@ button + button {
     margin-top: 12px;
 }
 
-.cleanup {
-}
-
 .cleanup__inner {
     height: 100vh;
     display: flex;
@@ -313,6 +315,7 @@ button + button {
 .generate-sizes {
     display: flex;
     height: 100vh;
+    overflow: hidden;
 }
 
 .generate-sizes__sidebar {
@@ -331,7 +334,25 @@ button + button {
     width: 600px;
     height: 100vh;
     padding: 10px;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     background-color: #f0f0f0;
 }
 
+.simple-input {
+    appearance: none;
+    border: none;
+    background: none;
+}
+
+.simple-input::-webkit-input-placeholder {
+    color: #000;
+}
+
+.simple-input:focus {
+    outline: none;
+}
+
+.simple-input:focus::-webkit-input-placeholder {
+    opacity: 0;
+}

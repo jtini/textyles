@@ -10,6 +10,21 @@ const App2 = () => {
     const [sizesSelection, setSizesSelection] = React.useState(null);
     const [textyles, setTextyles] = React.useState(null);
 
+    const onGenerateSizes = React.useCallback((sizes: {}[]) => {
+        console.log('onGenerateSizes', { sizes })
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'generate-sizes',
+                    data: {
+                        sizes,
+                    },
+                },
+            },
+            '*'
+        );
+    }, []);
+
     const onCreateStyles = React.useCallback((styles: TextNode[]) => {
         console.log('onCreateStyles', { styles })
         parent.postMessage(
@@ -62,7 +77,7 @@ const App2 = () => {
     return (
         <div>
             {sizesSelection &&
-                <GenerateSizes selection={sizesSelection} />
+                <GenerateSizes selection={sizesSelection} handleSubmit={onGenerateSizes} />
             }
             {selection &&
                 <CreateStyles selection={selection} handleSubmit={onCreateStyles} />

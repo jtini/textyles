@@ -1,13 +1,14 @@
 import * as React from 'react'
-import { Formik } from 'formik'
+import { Formik, Form, FieldArray, Field } from 'formik'
 import _ from 'lodash'
 
 interface GenerateSizesProps {
-    selection: TextNode[]
+    selection: TextNode[];
+    handleSubmit: (sizes: {}[]) => void
 }
 
 export default (props: GenerateSizesProps) => {
-    const { selection } = props;
+    const { selection, handleSubmit } = props;
     const textLayer = selection[0];
     let fontSize = null;
     if (textLayer) {
@@ -21,28 +22,53 @@ export default (props: GenerateSizesProps) => {
             return (
                 <Formik
                     initialValues={{
+                        sizes: [
+                            {
+                                name: 'Small Body',
+                                step: -1
+                            }, {
+                                name: 'Body',
+                                step: 0
+                            }, {
+                                name: 'Subheading',
+                                step: 1
+                            }, {
+                                name: 'Heading',
+                                step: 2
+                            }, {
+                                name: 'Subtitle',
+                                step: 3
+                            }, {
+                                name: 'Title',
+                                step: 4
+                            }
+                        ],
                         fontSize,
                         ratio: 1.2,
                         stepsBefore: 1,
-                        stepsAfter: 5,
+                        stepsAfter: 4,
                         round: true,
                         stepNames: ['Body', 'Subheading', 'Heading', 'Subtitle', 'Title'],
                         negStepNames: ['Small Body']
                     }}
+                    enableReinitialize
                     validate={() => {
                         const errors = {};
                         return errors;
                     }}
                     onSubmit={values => {
-                        const { fontSize, ratio } = values;
+                        const { sizes } = values;
+
+                        console.log({ sizes })
+                        handleSubmit([{}])
                         return null;
                     }}
                 >
-                    {({ values, handleChange, handleSubmit }) => (
+                    {({ values, handleChange, handleSubmit, setFieldValue }) => (
 
                         <div className="generate-sizes">
                             <aside className="generate-sizes__sidebar">
-                                <form onSubmit={handleSubmit} className="generate-sizes__form">
+                                <Form onSubmit={handleSubmit} className="generate-sizes__form">
                                     <div className="p-1">
                                         <p className="section-title">{`Base Size: ${values.fontSize.toString()}px`}</p>
                                         <label className="section-title">Ratio</label>
@@ -51,7 +77,7 @@ export default (props: GenerateSizesProps) => {
                                             className="input"
                                             id="ratio"
                                             name="ratio"
-                                            step={0.1}
+                                            step={0.01}
                                             min={1}
                                             value={values.ratio}
                                             onChange={handleChange}
@@ -65,7 +91,21 @@ export default (props: GenerateSizesProps) => {
                                             step={1}
                                             min={0}
                                             value={values.stepsBefore}
-                                            onChange={handleChange}
+                                            onChange={e => {
+                                                let newSizes = [...values.sizes];
+
+                                                if ((-1 * parseInt(e.target.value)) < values.sizes[0].step) {
+                                                    newSizes.unshift({
+                                                        name: `Step ${values.sizes[0].step - 1}`,
+                                                        step: values.sizes[0].step - 1
+                                                    })
+                                                } else {
+                                                    newSizes.shift()
+                                                }
+
+                                                setFieldValue('sizes', newSizes)
+                                                handleChange(e)
+                                            }}
                                         />
                                         <label className="label">Steps After</label>
                                         <input
@@ -76,7 +116,21 @@ export default (props: GenerateSizesProps) => {
                                             step={1}
                                             min={0}
                                             value={values.stepsAfter}
-                                            onChange={handleChange}
+                                            onChange={e => {
+                                                let newSizes = [...values.sizes];
+
+                                                if (parseInt(e.target.value) > values.sizes[values.sizes.length - 1].step) {
+                                                    newSizes.push({
+                                                        name: `Step ${values.sizes[values.sizes.length - 1].step + 1}`,
+                                                        step: values.sizes[values.sizes.length - 1].step + 1
+                                                    })
+                                                } else {
+                                                    newSizes.pop()
+                                                }
+
+                                                setFieldValue('sizes', newSizes)
+                                                handleChange(e)
+                                            }}
                                         />
 
                                         <div className="checkbox">
@@ -98,70 +152,49 @@ export default (props: GenerateSizesProps) => {
                                             Generate Sizes
                                         </button>
                                     </footer>
-                                </form>
+                                </Form>
                             </aside>
                             <main className="generate-sizes__preview">
-                                {_.times(values.stepsBefore, i => {
-                                    const size = values.fontSize
-                                    const divisor = Math.pow(values.ratio, values.stepsBefore - i)
-                                    let actualSize = typeof size === 'number' ? size / divisor : 0;
-                                    if (values.round) {
-                                        actualSize = Math.round(actualSize)
-                                    }
-
-                                    return (
-                                        <div key={i} className="preview-item">
-                                            <input
-                                                type="text"
-                                                placeholder={values.negStepNames[values.stepsBefore - i - 1] || (-1 * (values.stepsBefore - i)).toString()}
-                                            />
-                                            <p>{`${actualSize}px`}</p>
-                                            <p
-                                                className="preview-item__sample"
-                                                style={{
-                                                    fontSize: actualSize
-                                                }}
-                                            >{`The quick brown fox jumps over the lazy dog`}</p>
+                                <FieldArray
+                                    name="sizes"
+                                    render={arrayHelpers => (
+                                        <div>
+                                            {values.sizes && values.sizes.length > 0 && values.sizes.map((size, idx) => {
+                                                const fs = values.fontSize
+                                                let actualSize = fs;
+                                                if (size.step < 0) {
+                                                    const divisor = Math.pow(values.ratio, -1 * size.step)
+                                                    actualSize = fs / divisor
+                                                } else if (size.step > 0) {
+                                                    const multiplier = Math.pow(values.ratio, size.step)
+                                                    actualSize = fs * multiplier
+                                                }
+                                                if (values.round) {
+                                                    actualSize = Math.round(actualSize)
+                                                }
+                                                return (
+                                                    <div key={size.step} className="preview-item">
+                                                        <div className="flex-wrapper preview-item__top">
+                                                            <Field
+                                                                name={`sizes.${idx}.name`}
+                                                                className="simple-input"
+                                                                onFocus={e => {
+                                                                    e.target.select()
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        <p
+                                                            className="preview-item__sample"
+                                                            style={{
+                                                                fontSize: actualSize
+                                                            }}
+                                                        >{`The quick brown fox jumps over the lazy dog`}</p>
+                                                    </div>
+                                                )
+                                            })}
                                         </div>
-                                    )
-                                })}
-                                <div className="preview-item">
-                                    <input
-                                        type="text"
-                                        placeholder={values.stepNames[0]}
-                                    />
-                                    <p>{`${values.fontSize}px`}</p>
-                                    <p
-                                        className="preview-item__sample"
-                                        style={{
-                                            fontSize: values.fontSize
-                                        }}
-                                    >{`The quick brown fox jumps over the lazy dog`}</p>
-                                </div>
-                                {_.times(values.stepsAfter, i => {
-                                    const size = values.fontSize
-                                    const multiplier = Math.pow(values.ratio, i + 1)
-                                    let actualSize = typeof size === 'number' ? size * multiplier : 0;
-                                    if (values.round) {
-                                        actualSize = Math.round(actualSize)
-                                    }
-
-                                    return (
-                                        <div key={i} className="preview-item">
-                                            <input
-                                                type="text"
-                                                placeholder={values.stepNames[i] || i.toString()}
-                                            />
-                                            <p>{`${actualSize}px`}</p>
-                                            <p
-                                                className="preview-item__sample"
-                                                style={{
-                                                    fontSize: actualSize
-                                                }}
-                                            >{`The quick brown fox jumps over the lazy dog`}</p>
-                                        </div>
-                                    )
-                                })}
+                                    )}
+                                />
 
                             </main>
                         </div>

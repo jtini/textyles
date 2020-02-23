@@ -4,34 +4,18 @@ export default () => {
         const textyle = figma.getStyleById(style.id)
         const {
             description,
-            fontName,
-            fontSize,
             id,
             key,
-            letterSpacing,
-            lineHeight,
             name,
-            paragraphIndent,
-            paragraphSpacing,
             remote,
-            textCase,
-            textDecoration,
             type
         } = textyle
         return ({
             description,
-            fontName,
-            fontSize,
             id,
             key,
-            letterSpacing,
-            lineHeight,
             name,
-            paragraphIndent,
-            paragraphSpacing,
             remote,
-            textCase,
-            textDecoration,
             type
         })
     })

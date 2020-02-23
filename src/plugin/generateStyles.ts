@@ -15,7 +15,7 @@ export default () => {
             newStyle.textCase = textyle.textCase;
             newStyle.description = `Created by Textyles, ${new Date()}`;
             const match = currentSelection.find(layer => layer.id === textyle.id)
-            if (match) {
+            if (match && match.type === 'TEXT') {
                 match.textStyleId = newStyle.id
             }
 
@@ -27,35 +27,38 @@ export default () => {
     }
 
     const currentSelection = figma.currentPage.selection;
-    const textLayersFromSelection = (selection: any[]) => {
+    const textLayersFromSelection = (selection: readonly SceneNode[]) => {
         const textLayers = selection.filter(layer => layer.type === 'TEXT');
         return textLayers.map(layer => {
-            const {
-                id,
-                fontName,
-                fontSize,
-                letterSpacing,
-                lineHeight,
-                name,
-                paragraphIndent,
-                paragraphSpacing,
-                textCase,
-                textDecoration,
-                textStyleId
-            } = layer;
-            return ({
-                id,
-                fontName,
-                fontSize,
-                letterSpacing,
-                lineHeight,
-                name,
-                paragraphIndent,
-                paragraphSpacing,
-                textCase,
-                textDecoration,
-                textStyleId
-            })
+            if (layer.type === 'TEXT') {
+                const {
+                    id,
+                    fontName,
+                    fontSize,
+                    letterSpacing,
+                    lineHeight,
+                    name,
+                    paragraphIndent,
+                    paragraphSpacing,
+                    textCase,
+                    textDecoration,
+                    textStyleId
+                } = layer;
+                return ({
+                    id,
+                    fontName,
+                    fontSize,
+                    letterSpacing,
+                    lineHeight,
+                    name,
+                    paragraphIndent,
+                    paragraphSpacing,
+                    textCase,
+                    textDecoration,
+                    textStyleId
+                })
+
+            }
         })
     }
     const currentTextLayers = textLayersFromSelection(currentSelection)

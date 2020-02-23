@@ -55,7 +55,7 @@ export default () => {
             // Name it with the right name
             text.name = size.name
             // Add it below the latest one
-            figma.currentPage.appendChild(text)
+            currentSelection[0].parent.appendChild(text)
             text.y = textY
             textY += (size.fontSize * 1.5) + 24;
         })

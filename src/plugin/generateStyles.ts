@@ -1,5 +1,6 @@
 export default () => {
     async function buildTypeStyles(styles) {
+        const currentSelection = figma.currentPage.selection;
         styles.forEach(async (textyle, idx) => {
             await figma.loadFontAsync(textyle.fontName);
             const newStyle = figma.createTextStyle();
@@ -11,6 +12,10 @@ export default () => {
             newStyle.paragraphIndent = textyle.paragraphIndent;
             newStyle.paragraphSpacing = textyle.paragraphSpacing;
             newStyle.description = `Created by Textyles, ${new Date()}`;
+            const match = currentSelection.find(layer => layer.id === textyle.id)
+            if (match) {
+                match.textStyleId = newStyle.id
+            }
 
             if (idx === styles.length - 1) {
                 figma.notify(`${styles.length} Text Styles created`)

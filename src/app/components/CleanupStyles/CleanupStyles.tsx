@@ -26,7 +26,7 @@ export default (props: CleaupStylesProps) => {
                         return null;
                     }}
                 >
-                    {({ values, handleChange, handleSubmit, setFieldValue, isSubmitting }) => (
+                    {({ values, handleChange, handleSubmit, setFieldValue }) => (
                         <form onSubmit={handleSubmit} className="cleanup__inner">
                             <header className="cleanup__header">
                                 <div className="checkbox">

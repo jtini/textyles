@@ -178,7 +178,7 @@ export default (props: GenerateSizesProps) => {
                             <main className="generate-sizes__preview">
                                 <FieldArray
                                     name="sizes"
-                                    render={arrayHelpers => (
+                                    render={() => (
                                         <div>
                                             {values.sizes && values.sizes.length > 0 && values.sizes.map((size, idx) => {
                                                 const fs = values.fontSize

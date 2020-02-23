@@ -40,6 +40,27 @@ export default () => {
     }
     const currentTextLayers = textLayersFromSelection(currentSelection)
 
+    async function drawLayers(sizes) {
+        const currentSelection = figma.currentPage.selection;
+        let textY = currentSelection[0].y + currentSelection[0].height + 24;
+        sizes.forEach(async size => {
+            // Load the font
+            await figma.loadFontAsync(currentSelection[0].fontName)
+            // Draw a layer
+            const text = currentSelection[0].clone()
+            // Set some copy in it
+            text.characters = "The Quick Brown Fox Jumps Over The Lazy Dog"
+            // Style it to match this size
+            text.fontSize = size.fontSize;
+            // Name it with the right name
+            text.name = size.name
+            // Add it below the latest one
+            figma.currentPage.appendChild(text)
+            text.y = textY
+            textY += (size.fontSize * 1.5) + 24;
+        })
+    }
+
     figma.showUI(__html__, {
         width: 800,
         height: 500,
@@ -65,17 +86,12 @@ export default () => {
 
     figma.ui.onmessage = (msg) => {
         const { type } = msg;
+        const currentSelection = figma.currentPage.selection;
 
         switch (type) {
             case 'generate-sizes':
                 console.log('generate-sizes', msg.data.sizes)
-                msg.data.sizes.forEach(size => {
-                    // Draw a layer
-                    // Set some copy in it
-                    // Style it to match this size
-                    // Name it with the right name
-                    // Add it below the latest one
-                })
+                drawLayers(msg.data.sizes)
                 return;
             default:
                 console.log(msg.type)

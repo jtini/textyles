@@ -6,7 +6,10 @@ import _ from 'lodash'
 
 interface GenerateSizesProps {
     selection: TextNode[];
-    handleSubmit: (sizes: {}[]) => void
+    handleSubmit: (sizes: {
+        name: string,
+        fontSize: number
+    }[]) => void
 }
 
 export default (props: GenerateSizesProps) => {

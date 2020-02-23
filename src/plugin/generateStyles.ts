@@ -11,6 +11,8 @@ export default () => {
             newStyle.letterSpacing = textyle.letterSpacing;
             newStyle.paragraphIndent = textyle.paragraphIndent;
             newStyle.paragraphSpacing = textyle.paragraphSpacing;
+            newStyle.textDecoration = textyle.textDecoration;
+            newStyle.textCase = textyle.textCase;
             newStyle.description = `Created by Textyles, ${new Date()}`;
             const match = currentSelection.find(layer => layer.id === textyle.id)
             if (match) {

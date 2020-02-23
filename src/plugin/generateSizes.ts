@@ -48,6 +48,8 @@ export default () => {
             await figma.loadFontAsync(currentSelection[0].fontName)
             // Draw a layer
             const text = currentSelection[0].clone()
+            // Make it auto resize
+            text.textAutoResize = 'WIDTH_AND_HEIGHT'
             // Set some copy in it
             text.characters = "The Quick Brown Fox Jumps Over The Lazy Dog"
             // Style it to match this size

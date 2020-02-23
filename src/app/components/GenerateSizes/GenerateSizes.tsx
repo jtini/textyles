@@ -2,8 +2,6 @@ import * as React from 'react'
 import { Formik, Form, FieldArray, Field } from 'formik'
 import _ from 'lodash'
 
-// TODO: Send actual size info up to app to generate sizes with
-
 interface GenerateSizesProps {
     selection: TextNode[];
     handleSubmit: (sizes: {

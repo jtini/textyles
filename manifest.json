@@ -6,7 +6,7 @@
   "ui": "dist/ui.html",
   "menu": [
     {
-      "name": "Generate Sizes",
+      "name": "Generate Type Scale",
       "command": "generate-sizes"
     },
     {

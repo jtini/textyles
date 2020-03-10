@@ -2,11 +2,11 @@
     --selected: #ddebf6;
 }
 
-*,
+/* *,
 *:before,
 *:after {
     box-sizing: border-box;
-}
+} */
 
 body {
     font-family: 'Inter', sans-serif;
@@ -169,6 +169,12 @@ button + button {
 .preview-item * {
     background-color: rgba(0,0,100,0.05);
 } */
+
+.preview-item .input {
+    position: relative;
+    left: -7px;
+    max-width: 240px;
+}
 
 .preview-item--subdued {
     opacity: 0.4;

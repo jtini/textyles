@@ -7,45 +7,35 @@ interface GenerateSizesProps {
     handleSubmit: (sizes: {
         name: string,
         fontSize: number
-    }[]) => void
+    }[]) => void;
+    sizes: {
+        name: string,
+        step: number
+    }[];
+    updateStep: ({ step, name }: { step: number, name: string }) => void
 }
 
 export default (props: GenerateSizesProps) => {
-    const { selection, handleSubmit } = props;
+    const { selection, handleSubmit, sizes, updateStep } = props;
     const textLayer = selection[0];
     let fontSize = null;
+    console.log({ sizes })
     if (textLayer) {
         fontSize = textLayer.fontSize
     }
 
     switch (selection.length) {
         case 0:
-            return <p>Please select a layer to generate sizes from</p>
+            return (
+                <div>
+                    <h2 className="p-1">Please select a layer to generate sizes from</h2>
+                </div>
+            )
         case 1:
             return (
                 <Formik
                     initialValues={{
-                        sizes: [
-                            {
-                                name: 'Small Body',
-                                step: -1
-                            }, {
-                                name: 'Body',
-                                step: 0
-                            }, {
-                                name: 'Subheading',
-                                step: 1
-                            }, {
-                                name: 'Heading',
-                                step: 2
-                            }, {
-                                name: 'Subtitle',
-                                step: 3
-                            }, {
-                                name: 'Title',
-                                step: 4
-                            }
-                        ],
+                        sizes,
                         fontSize,
                         ratio: 1.2,
                         stepsBefore: 1,
@@ -89,10 +79,12 @@ export default (props: GenerateSizesProps) => {
 
                         <div className="generate-sizes">
                             <aside className="generate-sizes__sidebar">
-                                <Form onSubmit={handleSubmit} className="generate-sizes__form">
+                                <Form onSubmit={handleSubmit} className="generate-sizes__form" onChange={() => {
+                                    console.log('Form onChange', { values })
+                                }}>
                                     <div className="p-1">
                                         <p className="section-title">{`Base Size: ${values.fontSize.toString()}px`}</p>
-                                        <label className="section-title">Ratio</label>
+                                        <label className="label">Ratio</label>
                                         <input
                                             type="number"
                                             className="input"
@@ -202,6 +194,11 @@ export default (props: GenerateSizesProps) => {
                                                                 style={{ backgroundColor: '#f0f0f0' }}
                                                                 onFocus={e => {
                                                                     e.target.select()
+                                                                }}
+                                                                onChange={e => {
+                                                                    handleChange(e)
+                                                                    // Update it
+                                                                    updateStep({ step: size.step, name: e.target.value })
                                                                 }}
                                                             />
                                                             <p>{`${actualSize}px`}</p>

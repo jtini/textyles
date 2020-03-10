@@ -1,4 +1,34 @@
 export default () => {
+    const pluginData = figma.root.getPluginData('textyles');
+    // If there is no plugin data yet
+    if (!pluginData) {
+        // Set defaults
+        const defaultSizes = [
+            {
+                name: 'Small Body',
+                step: -1
+            }, {
+                name: 'Body',
+                step: 0
+            }, {
+                name: 'Subheading',
+                step: 1
+            }, {
+                name: 'Heading',
+                step: 2
+            }, {
+                name: 'Subtitle',
+                step: 3
+            }, {
+                name: 'Title',
+                step: 4
+            }
+        ];
+        const defaultProps = {
+            sizes: defaultSizes
+        }
+        figma.root.setPluginData('textyles', JSON.stringify(defaultProps))
+    }
     const currentSelection = figma.currentPage.selection;
     const textLayersFromSelection = (selection: readonly SceneNode[]) => {
         const textLayers = selection.filter(layer => layer.type === 'TEXT');
@@ -73,6 +103,13 @@ export default () => {
     });
 
     figma.ui.postMessage({
+        type: 'generate-sizes:hydrate',
+        message: {
+            data: JSON.parse(pluginData)
+        }
+    })
+
+    figma.ui.postMessage({
         type: 'generate-sizes:selection-change',
         message: {
             selection: currentTextLayers
@@ -91,6 +128,8 @@ export default () => {
     })
 
     figma.ui.onmessage = (msg) => {
+        const latestPluginData = figma.root.getPluginData('textyles');
+        let pluginDataObj = JSON.parse(latestPluginData)
         const { type } = msg;
 
         switch (type) {
@@ -98,6 +137,17 @@ export default () => {
                 console.log('generate-sizes', msg.data.sizes)
                 drawLayers(msg.data.sizes)
                 return;
+            case 'generate-sizes:update-step': {
+                let match = pluginDataObj.sizes.findIndex(step => step.step === msg.data.step);
+                let newSizes = [...pluginDataObj.sizes];
+                newSizes[match] = msg.data;
+                pluginDataObj = {
+                    ...pluginDataObj,
+                    sizes: newSizes
+                }
+                figma.root.setPluginData('textyles', JSON.stringify(pluginDataObj))
+                return;
+            }
             default:
                 console.log(msg.type)
         }

@@ -9,6 +9,7 @@ const App = () => {
     const [selection, setSelection] = React.useState(null);
     const [sizesSelection, setSizesSelection] = React.useState(null);
     const [textyles, setTextyles] = React.useState(null);
+    const [sizes, setSizes] = React.useState(null);
 
     const onGenerateSizes = React.useCallback((sizes: {
         name: string,
@@ -56,6 +57,22 @@ const App = () => {
         );
     }, []);
 
+    const onUpdateStep = React.useCallback(({ step, name }: { step: number, name: string }) => {
+        console.log('onUpdateStep', { step, name })
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'generate-sizes:update-step',
+                    data: {
+                        step,
+                        name
+                    },
+                },
+            },
+            '*'
+        );
+    }, []);
+
     React.useEffect(() => {
         window.onmessage = event => {
             const { type, message } = event.data.pluginMessage;
@@ -66,6 +83,9 @@ const App = () => {
                     return;
                 case 'generate-sizes:selection-change':
                     setSizesSelection(message.selection);
+                    return;
+                case 'generate-sizes:hydrate':
+                    setSizes(message.data.sizes)
                     return;
                 case 'get-local-styles':
                     setTextyles(message.styles)
@@ -79,7 +99,12 @@ const App = () => {
     return (
         <div>
             {sizesSelection &&
-                <GenerateSizes selection={sizesSelection} handleSubmit={onGenerateSizes} />
+                <GenerateSizes
+                    selection={sizesSelection}
+                    handleSubmit={onGenerateSizes}
+                    sizes={sizes}
+                    updateStep={onUpdateStep}
+                />
             }
             {selection &&
                 <CreateStyles selection={selection} handleSubmit={onCreateStyles} />

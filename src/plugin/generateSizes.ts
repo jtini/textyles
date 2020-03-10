@@ -170,6 +170,29 @@ export default () => {
                     }
                 })
 
+                // Add any new sizes after
+                for (let i = 0; i < msg.data.stepsAfter; i++) {
+                    const match = pluginDataObj.sizes.find(size => size.step === i + 1);
+                    if (typeof match === 'undefined') {
+                        newSizes.push({
+                            name: `Step ${i + 1}`,
+                            step: i + 1
+                        })
+                    }
+                }
+
+                // Add any new sizes before
+                for (let i = 0; i < msg.data.stepsBefore; i++) {
+                    const match = pluginDataObj.sizes.find(size => size.step === -1 * (i + 1));
+                    if (typeof match === 'undefined') {
+                        newSizes.unshift({
+                            name: `Step ${-1 * (i + 1)}`,
+                            step: -1 * (i + 1)
+                        })
+                    }
+                }
+                console.log({ newSizes })
+
                 pluginDataObj = {
                     ...pluginDataObj,
                     ratio: msg.data.ratio,

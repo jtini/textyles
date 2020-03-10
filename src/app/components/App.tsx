@@ -9,7 +9,7 @@ const App = () => {
     const [selection, setSelection] = React.useState(null);
     const [sizesSelection, setSizesSelection] = React.useState(null);
     const [textyles, setTextyles] = React.useState(null);
-    const [sizes, setSizes] = React.useState(null);
+    const [prefs, setPrefs] = React.useState(null)
 
     const onGenerateSizes = React.useCallback((sizes: {
         name: string,
@@ -58,7 +58,6 @@ const App = () => {
     }, []);
 
     const onUpdateStep = React.useCallback(({ step, name }: { step: number, name: string }) => {
-        console.log('onUpdateStep', { step, name })
         parent.postMessage(
             {
                 pluginMessage: {
@@ -66,6 +65,23 @@ const App = () => {
                     data: {
                         step,
                         name
+                    },
+                },
+            },
+            '*'
+        );
+    }, []);
+
+    const onUpdateSizePrefs = React.useCallback(({ ratio, stepsBefore, stepsAfter, round }: { ratio: number, stepsBefore: number, stepsAfter: number, round: boolean }) => {
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'generate-sizes:update-prefs',
+                    data: {
+                        ratio,
+                        stepsBefore,
+                        stepsAfter,
+                        round
                     },
                 },
             },
@@ -85,7 +101,7 @@ const App = () => {
                     setSizesSelection(message.selection);
                     return;
                 case 'generate-sizes:hydrate':
-                    setSizes(message.data.sizes)
+                    setPrefs(message.data);
                     return;
                 case 'get-local-styles':
                     setTextyles(message.styles)
@@ -102,8 +118,9 @@ const App = () => {
                 <GenerateSizes
                     selection={sizesSelection}
                     handleSubmit={onGenerateSizes}
-                    sizes={sizes}
+                    prefs={prefs}
                     updateStep={onUpdateStep}
+                    updatePrefs={onUpdateSizePrefs}
                 />
             }
             {selection &&

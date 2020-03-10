@@ -1,5 +1,5 @@
 export default () => {
-    const pluginData = figma.root.getPluginData('textyles');
+    let pluginData = figma.root.getPluginData('textyles');
     // If there is no plugin data yet
     if (!pluginData) {
         // Set defaults
@@ -25,9 +25,19 @@ export default () => {
             }
         ];
         const defaultProps = {
-            sizes: defaultSizes
+            ratio: 1.2,
+            stepsBefore: 1,
+            stepsAfter: 4,
+            sizes: defaultSizes,
+            round: true
         }
+        pluginData = JSON.stringify(defaultProps)
         figma.root.setPluginData('textyles', JSON.stringify(defaultProps))
+    } else {
+        // Uncomment to delete settings
+        // figma.root.setPluginData('textyles', '')
+
+        console.log({ pluginData })
     }
     const currentSelection = figma.currentPage.selection;
     const textLayersFromSelection = (selection: readonly SceneNode[]) => {
@@ -143,6 +153,29 @@ export default () => {
                 newSizes[match] = msg.data;
                 pluginDataObj = {
                     ...pluginDataObj,
+                    sizes: newSizes
+                }
+                figma.root.setPluginData('textyles', JSON.stringify(pluginDataObj))
+                return;
+            }
+            case 'generate-sizes:update-prefs': {
+                console.log('generate-sizes:update-prefs', msg.data)
+                let newSizes = [...pluginDataObj.sizes];
+                pluginDataObj.sizes.forEach((size, idx) => {
+                    if (
+                        size.step > msg.data.stepsAfter ||
+                        (size.step * -1) > msg.data.stepsBefore
+                    ) {
+                        newSizes.splice(idx, 1);
+                    }
+                })
+
+                pluginDataObj = {
+                    ...pluginDataObj,
+                    ratio: msg.data.ratio,
+                    stepsBefore: msg.data.stepsBefore,
+                    stepsAfter: msg.data.stepsAfter,
+                    round: msg.data.round,
                     sizes: newSizes
                 }
                 figma.root.setPluginData('textyles', JSON.stringify(pluginDataObj))

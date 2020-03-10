@@ -8,18 +8,24 @@ interface GenerateSizesProps {
         name: string,
         fontSize: number
     }[]) => void;
-    sizes: {
-        name: string,
-        step: number
-    }[];
-    updateStep: ({ step, name }: { step: number, name: string }) => void
+    prefs: {
+        ratio: number,
+        stepsBefore: number,
+        stepsAfter: number
+        sizes: {
+            name: string,
+            step: number
+        }[],
+        round: boolean
+    };
+    updateStep: ({ step, name }: { step: number, name: string }) => void;
+    updatePrefs: (args: { ratio: number, stepsBefore: number, stepsAfter: number, round: boolean }) => void
 }
 
 export default (props: GenerateSizesProps) => {
-    const { selection, handleSubmit, sizes, updateStep } = props;
+    const { selection, handleSubmit, sizes, prefs, updateStep, updatePrefs } = props;
     const textLayer = selection[0];
     let fontSize = null;
-    console.log({ sizes })
     if (textLayer) {
         fontSize = textLayer.fontSize
     }
@@ -35,14 +41,12 @@ export default (props: GenerateSizesProps) => {
             return (
                 <Formik
                     initialValues={{
-                        sizes,
+                        sizes: prefs.sizes,
                         fontSize,
-                        ratio: 1.2,
-                        stepsBefore: 1,
-                        stepsAfter: 4,
-                        round: true,
-                        stepNames: ['Body', 'Subheading', 'Heading', 'Subtitle', 'Title'],
-                        negStepNames: ['Small Body']
+                        ratio: prefs.ratio,
+                        stepsBefore: prefs.stepsBefore,
+                        stepsAfter: prefs.stepsAfter,
+                        round: prefs.round
                     }}
                     enableReinitialize
                     validate={() => {
@@ -79,9 +83,7 @@ export default (props: GenerateSizesProps) => {
 
                         <div className="generate-sizes">
                             <aside className="generate-sizes__sidebar">
-                                <Form onSubmit={handleSubmit} className="generate-sizes__form" onChange={() => {
-                                    console.log('Form onChange', { values })
-                                }}>
+                                <Form onSubmit={handleSubmit} className="generate-sizes__form">
                                     <div className="p-1">
                                         <p className="section-title">{`Base Size: ${values.fontSize.toString()}px`}</p>
                                         <label className="label">Ratio</label>
@@ -93,7 +95,13 @@ export default (props: GenerateSizesProps) => {
                                             step={0.01}
                                             min={1}
                                             value={values.ratio}
-                                            onChange={handleChange}
+                                            onChange={e => {
+                                                handleChange(e)
+                                                updatePrefs({
+                                                    ...values,
+                                                    ratio: parseFloat(e.target.value)
+                                                })
+                                            }}
                                         />
                                         <label className="label">Steps Before</label>
                                         <input
@@ -116,6 +124,10 @@ export default (props: GenerateSizesProps) => {
                                                     newSizes.shift()
                                                 }
 
+                                                updatePrefs({
+                                                    ...values,
+                                                    stepsBefore: parseFloat(e.target.value)
+                                                })
                                                 setFieldValue('sizes', newSizes)
                                                 handleChange(e)
                                             }}
@@ -141,6 +153,10 @@ export default (props: GenerateSizesProps) => {
                                                     newSizes.pop()
                                                 }
 
+                                                updatePrefs({
+                                                    ...values,
+                                                    stepsAfter: parseFloat(e.target.value)
+                                                })
                                                 setFieldValue('sizes', newSizes)
                                                 handleChange(e)
                                             }}
@@ -152,7 +168,14 @@ export default (props: GenerateSizesProps) => {
                                                 type="checkbox"
                                                 id="round"
                                                 checked={values.round}
-                                                onChange={handleChange}
+                                                onChange={e => {
+
+                                                    updatePrefs({
+                                                        ...values,
+                                                        round: e.target.checked
+                                                    })
+                                                    handleChange(e);
+                                                }}
                                             />
                                             <label className="checkbox__label" htmlFor="round">Round</label>
                                         </div>

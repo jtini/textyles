@@ -1,32 +1,12 @@
 // TODO: Figure out how to save step names independently
-
+import { defaultSizes } from './properties';
 // Set defaults
-const defaultSizes = [
-    {
-        name: 'Small Body',
-        step: -1
-    }, {
-        name: 'Body',
-        step: 0
-    }, {
-        name: 'Subheading',
-        step: 1
-    }, {
-        name: 'Heading',
-        step: 2
-    }, {
-        name: 'Subtitle',
-        step: 3
-    }, {
-        name: 'Title',
-        step: 4
-    }
-];
 const defaultProps = {
     ratio: 1.2,
     stepsBefore: 1,
     stepsAfter: 4,
     sizes: defaultSizes,
+    defaultSizeNames: defaultSizes,
     round: true
 }
 
@@ -145,23 +125,30 @@ export default () => {
 
         switch (type) {
             case 'generate-sizes':
-                console.log('generate-sizes', msg.data.sizes)
                 drawLayers(msg.data.sizes)
                 return;
             case 'generate-sizes:update-step': {
                 let match = pluginDataObj.sizes.findIndex(step => step.step === msg.data.step);
                 let newSizes = [...pluginDataObj.sizes];
+                let newDefaultSizeNames = [...pluginDataObj.defaultSizeNames];
+
                 newSizes[match] = msg.data;
+                newDefaultSizeNames[match] = msg.data;
                 pluginDataObj = {
                     ...pluginDataObj,
-                    sizes: newSizes
+                    sizes: newSizes,
+                    defaultSizeNames: newDefaultSizeNames
                 }
+
                 figma.root.setPluginData('textyles', JSON.stringify(pluginDataObj))
                 return;
             }
             case 'generate-sizes:update-prefs': {
-                console.log('generate-sizes:update-prefs', msg.data)
+                // console.log('generate-sizes:update-prefs', msg.data)
                 let newSizes = [...pluginDataObj.sizes];
+                let newDefaultSizeNames = [...pluginDataObj.defaultSizeNames];
+                // Delete any size that was removed
+                // But leave the size name intact if we need it later
                 pluginDataObj.sizes.forEach((size, idx) => {
                     if (
                         size.step > msg.data.stepsAfter ||
@@ -176,11 +163,15 @@ export default () => {
                     const match = pluginDataObj.sizes.find(size => size.step === i + 1);
                     if (typeof match === 'undefined') {
                         // Try to find the name
-                        const defaultMatch = defaultSizes.find(size => size.step === i + 1);
+                        const defaultMatch = pluginDataObj.defaultSizeNames.find(size => size.step === i + 1);
                         const name = typeof defaultMatch !== 'undefined' && defaultMatch.name ?
                             defaultMatch.name :
                             `Step ${i + 1}`;
                         newSizes.push({
+                            name,
+                            step: i + 1
+                        })
+                        newDefaultSizeNames.push({
                             name,
                             step: i + 1
                         })
@@ -192,11 +183,15 @@ export default () => {
                     const match = pluginDataObj.sizes.find(size => size.step === -1 * (i + 1));
                     if (typeof match === 'undefined') {
                         // Try to find the name
-                        const defaultMatch = defaultSizes.find(size => size.step === -1 * (i + 1));
+                        const defaultMatch = pluginDataObj.defaultSizeNames.find(size => size.step === -1 * (i + 1));
                         const name = typeof defaultMatch !== 'undefined' && defaultMatch.name ?
                             defaultMatch.name :
                             `Step ${-1 * (i + 1)}`;
                         newSizes.unshift({
+                            name,
+                            step: -1 * (i + 1)
+                        })
+                        newDefaultSizeNames.unshift({
                             name,
                             step: -1 * (i + 1)
                         })
@@ -209,9 +204,17 @@ export default () => {
                     stepsBefore: msg.data.stepsBefore,
                     stepsAfter: msg.data.stepsAfter,
                     round: msg.data.round,
-                    sizes: newSizes
+                    sizes: newSizes,
+                    defaultSizeNames: newDefaultSizeNames
                 }
-                figma.root.setPluginData('textyles', JSON.stringify(pluginDataObj))
+                console.log('update prefs: ', { pluginDataObj })
+                figma.root.setPluginData('textyles', JSON.stringify(pluginDataObj));
+                figma.ui.postMessage({
+                    type: 'generate-sizes:hydrate',
+                    message: {
+                        data: pluginDataObj
+                    }
+                })
                 return;
             }
             default:

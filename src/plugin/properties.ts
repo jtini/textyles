@@ -20,28 +20,27 @@ export const defaultBaseTextProps = {
     textStyleId: '',
 };
 
-export const defaultSizes = {
-    0: {
+export const defaultSizes = [
+    {
+        name: 'Small Body',
+        step: -1
+    }, {
         name: 'Body',
-        step: 0,
-    },
-    1: {
+        step: 0
+    }, {
         name: 'Subheading',
-        step: 1,
-    },
-    2: {
+        step: 1
+    }, {
         name: 'Heading',
-        step: 2,
-    },
-    3: {
+        step: 2
+    }, {
         name: 'Subtitle',
-        step: 3,
-    },
-    4: {
+        step: 3
+    }, {
         name: 'Title',
-        step: 4,
-    },
-};
+        step: 4
+    }
+];
 
 export const defaultRatio = 1.2;
 

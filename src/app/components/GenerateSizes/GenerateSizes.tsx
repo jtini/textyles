@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Formik, Form, FieldArray, Field } from 'formik'
 import _ from 'lodash'
-
 interface GenerateSizesProps {
     selection: TextNode[];
     handleSubmit: (sizes: {
@@ -23,7 +22,7 @@ interface GenerateSizesProps {
 }
 
 export default (props: GenerateSizesProps) => {
-    const { selection, handleSubmit, sizes, prefs, updateStep, updatePrefs } = props;
+    const { selection, handleSubmit, prefs, updateStep, updatePrefs } = props;
     const textLayer = selection[0];
     let fontSize = null;
     if (textLayer) {
@@ -117,7 +116,7 @@ export default (props: GenerateSizesProps) => {
 
                                                 if ((-1 * parseInt(e.target.value)) < values.sizes[0].step) {
                                                     newSizes.unshift({
-                                                        name: `Step ${values.sizes[0].step - 1}`,
+                                                        name: values.sizes[0].name,
                                                         step: values.sizes[0].step - 1
                                                     })
                                                 } else {
@@ -146,7 +145,7 @@ export default (props: GenerateSizesProps) => {
 
                                                 if (parseInt(e.target.value) > values.sizes[values.sizes.length - 1].step) {
                                                     newSizes.push({
-                                                        name: `Step ${values.sizes[values.sizes.length - 1].step + 1}`,
+                                                        name: values.sizes[values.sizes.length - 1].name,
                                                         step: values.sizes[values.sizes.length - 1].step + 1
                                                     })
                                                 } else {

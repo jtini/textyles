@@ -35,7 +35,7 @@ export default (props: CreateStylesProps) => {
                     </footer>
                 </div>
                 :
-                <h2>No text layers are selected</h2>
+                <h2 className="p-1">No text layers are selected</h2>
             }
         </div>
     )

@@ -1,43 +1,44 @@
+// TODO: Figure out how to save step names independently
+
+// Set defaults
+const defaultSizes = [
+    {
+        name: 'Small Body',
+        step: -1
+    }, {
+        name: 'Body',
+        step: 0
+    }, {
+        name: 'Subheading',
+        step: 1
+    }, {
+        name: 'Heading',
+        step: 2
+    }, {
+        name: 'Subtitle',
+        step: 3
+    }, {
+        name: 'Title',
+        step: 4
+    }
+];
+const defaultProps = {
+    ratio: 1.2,
+    stepsBefore: 1,
+    stepsAfter: 4,
+    sizes: defaultSizes,
+    round: true
+}
+
 export default () => {
     let pluginData = figma.root.getPluginData('textyles');
     // If there is no plugin data yet
     if (!pluginData) {
-        // Set defaults
-        const defaultSizes = [
-            {
-                name: 'Small Body',
-                step: -1
-            }, {
-                name: 'Body',
-                step: 0
-            }, {
-                name: 'Subheading',
-                step: 1
-            }, {
-                name: 'Heading',
-                step: 2
-            }, {
-                name: 'Subtitle',
-                step: 3
-            }, {
-                name: 'Title',
-                step: 4
-            }
-        ];
-        const defaultProps = {
-            ratio: 1.2,
-            stepsBefore: 1,
-            stepsAfter: 4,
-            sizes: defaultSizes,
-            round: true
-        }
         pluginData = JSON.stringify(defaultProps)
         figma.root.setPluginData('textyles', JSON.stringify(defaultProps))
     } else {
         // Uncomment to delete settings
         // figma.root.setPluginData('textyles', '')
-
-        console.log({ pluginData })
     }
     const currentSelection = figma.currentPage.selection;
     const textLayersFromSelection = (selection: readonly SceneNode[]) => {
@@ -174,8 +175,13 @@ export default () => {
                 for (let i = 0; i < msg.data.stepsAfter; i++) {
                     const match = pluginDataObj.sizes.find(size => size.step === i + 1);
                     if (typeof match === 'undefined') {
+                        // Try to find the name
+                        const defaultMatch = defaultSizes.find(size => size.step === i + 1);
+                        const name = typeof defaultMatch !== 'undefined' && defaultMatch.name ?
+                            defaultMatch.name :
+                            `Step ${i + 1}`;
                         newSizes.push({
-                            name: `Step ${i + 1}`,
+                            name,
                             step: i + 1
                         })
                     }
@@ -185,13 +191,17 @@ export default () => {
                 for (let i = 0; i < msg.data.stepsBefore; i++) {
                     const match = pluginDataObj.sizes.find(size => size.step === -1 * (i + 1));
                     if (typeof match === 'undefined') {
+                        // Try to find the name
+                        const defaultMatch = defaultSizes.find(size => size.step === -1 * (i + 1));
+                        const name = typeof defaultMatch !== 'undefined' && defaultMatch.name ?
+                            defaultMatch.name :
+                            `Step ${-1 * (i + 1)}`;
                         newSizes.unshift({
-                            name: `Step ${-1 * (i + 1)}`,
+                            name,
                             step: -1 * (i + 1)
                         })
                     }
                 }
-                console.log({ newSizes })
 
                 pluginDataObj = {
                     ...pluginDataObj,

@@ -9,7 +9,7 @@
 		"prettier:format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,json}' "
 	},
 	"dependencies": {
-		"axios": "^0.19.2",
+		"axios": "^0.21.1",
 		"classnames": "^2.2.6",
 		"formik": "^2.1.2",
 		"modularscale-js": "^3.0.1",
